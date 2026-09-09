@@ -1,9 +1,10 @@
 /** Configuration de l'application. Les secrets viennent de `.env` (voir `.env.example`). */
 
-/* Jeton public Mapbox. Absent, l'application bascule sur les tuiles OpenStreetMap
-   et désactive l'autocomplétion d'adresses et la recherche d'hébergements. */
-export const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || "";
-export const MAPBOX_STYLE = import.meta.env.VITE_MAPBOX_STYLE || "mapbox/outdoors-v12";
+/* Jeton public Mapbox, inscrit à la compilation (voir scripts/build-env.mjs).
+   Absent, l'application bascule sur les tuiles OpenStreetMap et désactive
+   l'autocomplétion d'adresses ainsi que la recherche d'hébergements. */
+export const MAPBOX_TOKEN = __MAPBOX_TOKEN__;
+export const MAPBOX_STYLE = __MAPBOX_STYLE__;
 
 /* Rayons du balayage concentrique autour de chaque lieu du mariage, en km. */
 export const RINGS = [2, 5, 10, 17, 25];

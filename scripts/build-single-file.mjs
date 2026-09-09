@@ -10,9 +10,10 @@
  *
  * Usage : npm run build:single  →  dist-single/hebergements-mariage.html
  */
-import { build } from "vite";
+import { build, loadEnv } from "vite";
 import { readFile, writeFile, rm, mkdir } from "node:fs/promises";
 import { join } from "node:path";
+import { buildDefines } from "./build-env.mjs";
 
 const OUT_DIR = "dist-single";
 const OUT_FILE = "hebergements-mariage.html";
@@ -21,6 +22,9 @@ await rm(OUT_DIR, { recursive: true, force: true });
 
 await build({
   configFile: false,
+  // `configFile: false` écarte vite.config.js : il faut réinjecter les valeurs
+  // de compilation, sinon le fichier autonome part sans jeton Mapbox.
+  define: buildDefines({ ...loadEnv("production", process.cwd(), ""), ...process.env }),
   build: {
     outDir: OUT_DIR,
     target: "es2022",

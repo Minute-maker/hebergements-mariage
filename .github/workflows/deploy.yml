@@ -5,7 +5,7 @@
 #
 # Le jeton Mapbox est facultatif. Pour l'utiliser, ajoutez-le en secret de dépôt
 # (Settings → Secrets and variables → Actions → New repository secret) sous le nom
-# VITE_MAPBOX_TOKEN, et autorisez le domaine github.io dans les restrictions d'URL
+# MAPBOX_TOKEN, et autorisez l'adresse exacte du site dans les restrictions d'URL
 # du jeton. Sans secret, la carte utilise OpenStreetMap.
 name: Publier sur GitHub Pages
 
@@ -35,7 +35,7 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          VITE_MAPBOX_TOKEN: ${{ secrets.VITE_MAPBOX_TOKEN }}
+          MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN || secrets.VITE_MAPBOX_TOKEN }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

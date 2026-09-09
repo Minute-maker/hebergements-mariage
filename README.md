@@ -45,11 +45,19 @@ pas de clé.
 
 ### Le jeton Mapbox
 
-`.env` n'est pas versionné : chaque machine a besoin de sa propre copie. Le jeton
-doit être **public** (`pk.`), jamais secret (`sk.`) — il est visible par quiconque
-ouvre la page. Restreignez-le dans la console Mapbox aux domaines qui servent
-l'application (section *URL restrictions*) et vérifiez qu'il porte le scope
+Le jeton est lu à la compilation et **inscrit dans le fichier livré au
+navigateur** — c'est nécessaire pour que la carte s'affiche. Il doit donc être
+**public** (`pk.`), jamais secret (`sk.`). Ce qui le protège n'est pas le secret
+mais la liste *URL restrictions* de la console Mapbox, où il faut inscrire
+l'adresse exacte du site — **les caractères `*` y sont refusés** — avec le scope
 `styles:tiles`.
+
+Deux noms de variable sont acceptés, `MAPBOX_TOKEN` d'abord, `VITE_MAPBOX_TOKEN`
+ensuite. **Chez un hébergeur, utilisez `MAPBOX_TOKEN`** : Vercel et consorts
+signalent — et peuvent filtrer — les noms préfixés `VITE_`, puisque le préfixe
+annonce une valeur exposée au navigateur.
+
+`.env` n'est pas versionné : chaque machine a besoin de sa propre copie.
 
 Le jeton qui figurait en clair dans le prototype est exposé (il est dans le
 prototype comme dans les transcriptions) : mieux vaut le remplacer par un jeton

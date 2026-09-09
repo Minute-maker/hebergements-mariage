@@ -15,8 +15,10 @@
 import "./styles/app.css";
 import "./components/image-slot.js";
 
+import { MAPBOX_TOKEN } from "./config.js";
 import { hooks } from "./hooks.js";
 import { initState, state } from "./state.js";
+import { setStatus } from "./ui/status.js";
 import { drawVenues, frameMap, getMap, initMap } from "./map/map.js";
 import { cluster } from "./map/cluster.js";
 import { createAllMarkers, loadNearby, locateAll, refreshRoutes } from "./services/discovery.js";
@@ -47,6 +49,15 @@ initFilters();
 initVenuesPanel();
 initList();
 initBugReport();
+
+/* Le diagnostic doit être lisible dès l'ouverture, pas seulement quand on essaie
+   de saisir une adresse : sans jeton, la carte marche mais deux fonctions non. */
+if (!MAPBOX_TOKEN) {
+  state.tileNotice =
+    "Aucun jeton Mapbox configuré — carte OpenStreetMap utilisée. " +
+    "La saisie d'adresse et la recherche d'hébergements autour des lieux sont indisponibles.";
+}
+setStatus();
 
 /* Carte */
 initMap({ onMapClick, onViewChange: cluster });
