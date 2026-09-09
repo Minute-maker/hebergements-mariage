@@ -19,6 +19,24 @@ npm run dev               # http://localhost:5173
 
 `npm run build` produit le site statique dans `dist/`, `npm run preview` le sert.
 
+### Version autonome, sans rien installer
+
+```bash
+npm run build:single      # → dist-single/hebergements-mariage.html
+```
+
+Un seul fichier qui contient tout (styles, script, images) et s'ouvre d'un
+double-clic depuis le disque — pratique pour envoyer l'application à quelqu'un.
+Deux différences avec la version servie :
+
+- le jeton Mapbox y est **incorporé au moment de la compilation** ; ne diffusez ce
+  fichier qu'à des gens à qui vous confiez votre jeton ;
+- ouverte en `file://`, la page a pour origine `null`, que les restrictions d'URL
+  d'un jeton Mapbox rejettent en général : la carte retombe alors sur
+  OpenStreetMap, et l'autocomplétion d'adresses ne répond pas. Pour l'éviter, il
+  faut lever la restriction d'URL du jeton — ou servir la page (`npm run preview`)
+  depuis un domaine autorisé.
+
 L'application fonctionne **sans jeton Mapbox** : elle bascule sur les tuiles
 OpenStreetMap. Sans jeton, deux fonctions sont indisponibles — l'autocomplétion
 d'adresses et la recherche d'hébergements autour des lieux (les deux passent par

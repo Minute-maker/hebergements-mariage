@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "vite"
+    "start": "vite",
+    "build:single": "node scripts/build-single-file.mjs"
   },
   "dependencies": {
     "leaflet": "^1.9.4"
