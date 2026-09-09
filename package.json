@@ -1,0 +1,19 @@
+{
+  "name": "hebergements-mariage",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Sélection d'hébergements autour des lieux d'un mariage — carte, filtres, itinéraires et profils invités.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "vite"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4"
+  },
+  "devDependencies": {
+    "vite": "^8.2.2"
+  }
+}

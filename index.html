@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hébergements — Mariage à Biarritz, 28–29 mai 2027</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💍</text></svg>">
+</head>
+<body>
+<div id="app">
+  <div id="dlgWrap"><form id="dlg">
+    <h3 id="dlgTitle"></h3>
+    <input id="dlgInput" autocomplete="off">
+    <div class="dact">
+      <button type="button" class="ghost" id="dlgCancel">Annuler</button>
+      <button type="submit" class="book" id="dlgOk">Valider</button>
+    </div>
+  </form></div>
+  <button id="railToggle" title="Masquer / afficher le panneau">‹</button>
+  <nav id="rail">
+    <div class="rlabel">Événements</div>
+    <div class="elist" id="elist"></div>
+    <button id="addEvent">+ Nouvel événement</button>
+    <div class="rsec">
+      <div class="rlabel">Qui es-tu&nbsp;?</div>
+      <div class="me" id="plist"></div>
+      <button id="addPerson">+ Ajouter une personne</button>
+      <input type="file" id="avFile" accept="image/*" style="display:none">
+      <div class="rhint">Cliquez sur un avatar (ou glissez-y une photo) pour changer la photo. Profils enregistrés sur cet appareil.</div>
+    </div>
+  </nav>
+  <div id="left">
+    <header class="venue">
+      <div class="eyebrow">Mariage de <span id="wedNames" contenteditable="true" spellcheck="false" title="Cliquez pour modifier les prénoms">Jeanne &amp; Louis</span></div>
+      <image-slot id="ev-hero" shape="rounded" radius="16" placeholder="Déposez une photo du couple ou du groupe" style="height:200px;margin:10px 0 4px"></image-slot>
+      <div style="font-size:11px;color:var(--muted);margin:0 0 14px">Double-cliquez sur la photo pour la recadrer (glisser pour déplacer, molette ou coins pour zoomer, Échap pour valider).</div>
+      <div class="stay">
+        <label>Arrivée<input type="date" id="dateIn" value="2027-05-28"></label>
+        <label>Départ<input type="date" id="dateOut" value="2027-05-29"></label>
+        <span id="nights" class="nights">1 nuit</span>
+        <label>Personnes<select id="people">
+          <option value="1">1 personne</option>
+          <option value="2" selected>2 personnes</option>
+          <option value="3">3 personnes</option>
+          <option value="4">4 personnes</option>
+          <option value="6">6 personnes et +</option>
+        </select></label>
+      </div>
+      <div class="addr">Distances et trajets calculés depuis le lieu sélectionné</div>
+      <div class="venues" id="venues"></div>
+      <div class="actions" style="margin-top:12px">
+        <button class="book" id="searchNearby">Rechercher les hébergements autour de ces lieux</button>
+      </div>
+      <div class="dstat" id="dstat"></div>
+    </header>
+
+    <div class="recap" id="recap"></div>
+
+    <div class="panel">
+      <div class="flabel">Type d'hébergement</div>
+      <div class="chips" id="typeChips"></div>
+      <div class="rows">
+        <div class="row">
+          <div class="top"><span class="flabel" style="margin:0">Budget par nuit</span><span class="val" id="budgetVal"></span></div>
+          <div class="slabel">Prix minimum</div>
+          <input type="range" id="budgetMin" min="30" max="320" step="5">
+          <div class="slabel">Prix maximum</div>
+          <input type="range" id="budgetMax" min="30" max="320" step="5">
+        </div>
+        <div class="row">
+          <div class="top"><span class="flabel" style="margin:0">Distance max</span><span class="val" id="distVal"></span></div>
+          <input type="range" id="dist" min="1" max="25" step="1">
+        </div>
+        <div class="row">
+          <label class="tracerow"><input type="checkbox" id="trace"><span>Tracer les trajets entre les trois lieux</span></label>
+          <span class="vhint">Itinéraires routiers entre mairie, église et lieu de réception, avec distance et temps de trajet.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="note" id="note">Fond de carte Mapbox. Distances et temps voiture calculés par OSRM depuis le lieu de référence ; à pied et en bus estimés (≈). Adresses réelles pour tous les hébergements sauf les locations de particuliers, dont l'adresse n'est communiquée qu'après réservation — leur repère est placé au quartier et peut être <b>glissé</b>. <b>Tarifs et disponibilités indicatifs</b> pour mai 2027, à confirmer auprès de chaque établissement ; les notes et avis ne sont pas reproduits ici — utilisez le lien « Voir les avis » de chaque logement.</div>
+
+    <div class="sortbar">
+      <div class="chips" id="sortChips"></div>
+      <div class="count" id="count"></div>
+    </div>
+
+    <div id="list"></div>
+  </div>
+
+  <div id="right">
+    <button id="bugBtn">Signaler un bug</button>
+    <div id="bugPanel">
+      <h3>Signaler un problème</h3>
+      <p>Décrivez ce qui ne fonctionne pas. Le message est enregistré sur cet appareil ; vous pouvez aussi l'envoyer par e-mail.</p>
+      <textarea id="bugText" placeholder="ex. les avatars n'apparaissent pas sur la carte"></textarea>
+      <div class="actions" style="margin-top:8px">
+        <button class="book" id="bugSave">Enregistrer</button>
+        <a class="verify" id="bugMail" href="#">Envoyer par e-mail</a>
+      </div>
+      <div id="bugMsg"></div>
+    </div>
+    <div id="map"></div>
+  </div>
+</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
