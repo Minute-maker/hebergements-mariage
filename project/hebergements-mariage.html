@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hébergements — Mariage à Biarritz, 28–29 mai 2027</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="_ds/clay-design-system-b1808719-4cb2-47df-adc0-fc28ab819c0e/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/clay-design-system-b1808719-4cb2-47df-adc0-fc28ab819c0e/tokens/colors.css">
+<link rel="stylesheet" href="_ds/clay-design-system-b1808719-4cb2-47df-adc0-fc28ab819c0e/tokens/typography.css">
+<link rel="stylesheet" href="_ds/clay-design-system-b1808719-4cb2-47df-adc0-fc28ab819c0e/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/clay-design-system-b1808719-4cb2-47df-adc0-fc28ab819c0e/tokens/radius.css">
+<link rel="stylesheet" href="_ds/clay-design-system-b1808719-4cb2-47df-adc0-fc28ab819c0e/tokens/elevation.css">
+<link rel="stylesheet" href="_ds/clay-design-system-b1808719-4cb2-47df-adc0-fc28ab819c0e/styles.css">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:var(--canvas);color:var(--body);font-family:Inter,system-ui,sans-serif;font-size:14px;line-height:1.55}
+  a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
+  a:hover{color:var(--primary-active)}
+  h1,h2,h3{font-family:Inter,system-ui,sans-serif;color:var(--ink);margin:0}
+  #app{display:grid;grid-template-columns:220px minmax(0,440px) minmax(0,1fr);height:100vh}
+  #dlgWrap{position:fixed;inset:0;z-index:1200;background:rgba(10,10,10,.28);display:none;align-items:center;justify-content:center;padding:20px}
+  #dlgWrap.open{display:flex}
+  #dlg{background:var(--canvas);border:1px solid var(--hairline);border-radius:16px;padding:18px;width:320px;max-width:100%}
+  #dlg h3{font-size:14px;margin:0 0 10px}
+  #dlg input{width:100%;font:inherit;font-size:13px;color:var(--ink);background:var(--canvas);border:1px solid var(--hairline);border-radius:12px;padding:9px 11px}
+  #dlg input:focus{outline:none;border-color:var(--ink)}
+  #dlg .dact{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+  #dlg .ghost{border:1px solid var(--hairline);background:transparent;color:var(--ink);border-radius:8px;padding:7px 12px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+  #dlg .ghost:hover{border-color:var(--ink)}
+  #railToggle{position:fixed;left:196px;top:22px;z-index:950;width:30px;height:30px;border:1px solid var(--hairline);background:var(--canvas);color:var(--muted);border-radius:50%;font:inherit;font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:left .18s,color .18s,border-color .18s}
+  #railToggle:hover{color:var(--ink);border-color:var(--ink)}
+  #app.norail #railToggle{left:14px}
+  #app.norail{grid-template-columns:0 minmax(0,440px) minmax(0,1fr)}
+  #app.norail #rail{width:0;padding:0;border-right:none;overflow:hidden;visibility:hidden}
+  #rail{display:flex;flex-direction:column;min-height:0;overflow-y:auto;background:var(--surface-soft);border-right:1px solid var(--hairline);padding:20px 14px}
+  #rail .rlabel{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  #rail .elist{display:flex;flex-direction:column;gap:6px}
+  .ev{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px;width:100%;text-align:left;background:transparent;border:1px solid transparent;border-radius:12px;padding:9px 10px;font:inherit;cursor:pointer;color:var(--ink)}
+  .ev:hover{background:var(--surface-card)}
+  .ev.on{background:var(--ink);color:var(--on-primary)}
+  .ev .en{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ev .ed{font-size:11px;font-weight:400;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ev.on .ed{color:var(--surface-strong)}
+  .ev .bud{text-decoration:underline dotted;cursor:pointer}
+  .ev .del{border:none;background:transparent;color:inherit;opacity:.5;font:inherit;font-size:14px;line-height:1;cursor:pointer;padding:2px 4px}
+  .ev .del:hover{opacity:1}
+  #addEvent{margin-top:10px;border:1px dashed var(--hairline);background:transparent;color:var(--ink);border-radius:12px;padding:9px 10px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;text-align:left}
+  #addEvent:hover{border-color:var(--ink)}
+  #left{display:flex;flex-direction:column;min-height:0;overflow-y:auto;border-right:1px solid var(--hairline);background:var(--canvas)}
+  header.venue,.panel,.sortbar{flex:none}
+  header.venue{padding:20px 24px 16px;background:var(--surface-soft);border-bottom:1px solid var(--hairline)}
+  .eyebrow{font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+  .venue h1{font-size:24px;font-weight:500;letter-spacing:-.5px;margin-top:6px}
+  .venues{display:grid;gap:6px;margin-top:12px}
+  .vrow{display:grid;grid-template-columns:10px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:8px 10px;border-radius:12px;border:1px solid var(--hairline);background:var(--canvas);cursor:pointer;font:inherit;text-align:left;color:var(--body)}
+  .vedit{border:1px solid var(--hairline);background:var(--canvas);color:var(--ink);border-radius:8px;padding:4px 8px;font:inherit;font-size:11px;font-weight:600;cursor:pointer}
+  .vedit:active{border-color:var(--ink)}
+  .vrow[aria-pressed="true"]{border-color:var(--ink);background:var(--surface-strong)}
+  .vrow .dot{width:10px;height:10px;border-radius:50%}
+  .vrow .name{font-size:13px;font-weight:600;color:var(--ink)}
+  .vrow .sub{display:block;min-width:0;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .vrow>span:nth-child(2){min-width:0;overflow:hidden}
+  .vrow .flag{font-size:11px;font-weight:600;color:var(--muted)}
+  .vrow[aria-pressed="true"] .flag{color:var(--ink)}
+  .vrow.editing{grid-template-columns:10px minmax(0,1fr) auto;align-items:start}
+  .vinput{width:100%;font:inherit;font-size:12px;border:1px solid var(--ink);border-radius:10px;padding:6px 8px;background:var(--canvas);color:var(--ink)}
+  .vinput:focus{outline:none}
+  .vwrap{position:relative}
+  .vsug{position:absolute;left:0;right:0;top:100%;margin-top:4px;z-index:20;background:var(--canvas);border:1px solid var(--ink);border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(10,10,10,.12)}
+  .vsug button{display:block;width:100%;text-align:left;border:none;background:transparent;font:inherit;font-size:12px;color:var(--body);padding:7px 10px;cursor:pointer;border-bottom:1px solid var(--hairline-soft)}
+  .vsug button:last-child{border-bottom:none}
+  .vsug button[aria-selected="true"]{background:var(--surface-strong);color:var(--ink);font-weight:600}
+  .vsug button b{display:block;color:var(--ink);font-weight:600}
+  .vsug button span{color:var(--muted);font-size:11px}
+  .vhint{display:block;margin-top:4px;font-size:10px;color:var(--muted)}
+  #wedNames{border-bottom:1px dashed var(--hairline);cursor:text;outline:none}
+  #wedNames:focus{border-bottom-color:var(--ink)}
+  #rail .rsec{margin-top:22px}
+  .me{display:flex;flex-direction:column;gap:6px}
+  .person{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;background:transparent;border:1px solid transparent;border-radius:12px;padding:6px 8px;font:inherit;cursor:pointer;color:var(--ink);text-align:left}
+  .person:hover{background:var(--surface-card)}
+  .person.on{background:var(--ink);color:var(--on-primary)}
+  .person .pn{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .person .del{border:none;background:transparent;color:inherit;opacity:.5;font:inherit;font-size:14px;cursor:pointer;padding:2px 4px}
+  .person .del:hover{opacity:1}
+  .av{width:28px;height:28px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;background:var(--surface-strong);color:var(--ink);background-size:cover;background-position:center;border:1.5px solid var(--canvas)}
+  .av.drop{outline:2px dashed var(--ink);outline-offset:1px}
+  #plist .av{cursor:pointer}
+  #plist .av:hover{outline:2px solid var(--ink);outline-offset:1px}
+  #addPerson{border:1px dashed var(--hairline);background:transparent;color:var(--ink);border-radius:12px;padding:8px 10px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;text-align:left}
+  #addPerson:hover{border-color:var(--ink)}
+  .rhint{font-size:10px;color:var(--muted);margin-top:6px;text-wrap:pretty}
+  .sleepers{display:flex;align-items:center;gap:4px;margin-top:8px;flex-wrap:wrap}
+  .sleepers .av{width:24px;height:24px;font-size:10px;margin-left:-6px}
+  .sleepers .av:first-child{margin-left:0}
+  .sleepers .cnt{font-size:11px;color:var(--muted);margin-left:4px}
+  .pinav{position:absolute;top:-16px;left:50%;transform:translateX(-50%);display:flex}
+  .pinav .av{width:18px;height:18px;font-size:9px;margin-left:-5px}
+  .pinav .av:first-child{margin-left:0}
+  .recap{padding:16px 24px;border-top:1px solid var(--hairline);background:var(--surface-soft)}
+  .recap h3{font-size:13px;margin-bottom:8px}
+  .recap .rline{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--hairline);font-size:12px}
+  .recap .rline:last-child{border-bottom:none}
+  .recap .who{display:flex;align-items:center;gap:4px}
+  .recap .who .av{width:22px;height:22px;font-size:9px;margin-left:-5px}
+  .recap .who .av:first-child{margin-left:0}
+  .recap .none{font-size:12px;color:var(--muted)}
+  .slabel{font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:6px 0 2px}
+  .stay{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-top:10px}
+  .stay label{display:flex;flex-direction:column;gap:3px;font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--muted)}
+  .stay input{font:inherit;font-size:13px;color:var(--ink);background:var(--canvas);border:1px solid var(--hairline);border-radius:12px;padding:7px 10px}
+  .stay input:focus,.stay select:focus{outline:none;border-color:var(--ink)}
+  .stay select{font:inherit;font-size:13px;color:var(--ink);background:var(--canvas);border:1px solid var(--hairline);border-radius:12px;padding:7px 10px}
+  .nights{background:var(--ink);color:var(--on-primary);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:600}
+  .dstat{margin-top:8px;font-size:11px;color:var(--muted)}
+  .venue .addr{margin-top:2px;color:var(--body)}
+  .venue .date{display:inline-block;margin-top:12px;background:var(--ink);color:var(--on-primary);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600}
+  .panel{padding:16px 24px;border-bottom:1px solid var(--hairline)}
+  .flabel{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:8px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{border:1px solid var(--hairline);background:transparent;border-radius:999px;padding:6px 12px;font:inherit;font-size:12px;font-weight:600;color:var(--body);cursor:pointer}
+  .chip[aria-pressed="true"]{background:var(--ink);color:var(--on-primary);border-color:var(--ink)}
+  .rows{display:grid;gap:14px;margin-top:14px}
+  .row{display:grid;grid-template-columns:1fr;gap:6px}
+  .row .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .row .val{font-size:12px;font-weight:600;color:var(--ink)}
+  input[type=range]{width:100%;accent-color:var(--ink);margin:0}
+  select{font:inherit;font-size:13px;border:1px solid var(--hairline);border-radius:12px;padding:8px 10px;background:var(--canvas);color:var(--ink)}
+  select:focus{outline:none;border-color:var(--ink)}
+  .sortbar{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 24px;border-bottom:1px solid var(--hairline);background:var(--canvas)}
+  .count{font-size:12px;font-weight:600;color:var(--muted)}
+  #list{padding:16px 24px 40px;display:grid;gap:12px;align-content:start}
+  .card{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;background:var(--surface-card);border-radius:16px;padding:12px;cursor:pointer;border:2px solid transparent;transition:border-color .12s}
+  .card.sel{border-color:var(--ink);background:var(--surface-strong)}
+  .card h3{font-size:15px;font-weight:600;letter-spacing:-.2px;text-wrap:pretty}
+  .card .meta{display:flex;flex-direction:column;gap:7px;min-width:0}
+  .badge{display:inline-block;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:600;letter-spacing:.2px}
+  .price{font-size:15px;font-weight:600;color:var(--ink);white-space:nowrap}
+  .price span{font-size:11px;font-weight:500;color:var(--muted)}
+  .headline{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+  .trip{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12px;color:var(--body)}
+  .trip b{color:var(--ink);font-weight:600}
+  .rating{font-size:12px;font-weight:600;color:var(--ink)}
+  .rating em{font-style:normal;font-weight:500;color:var(--muted)}
+  .extras{display:flex;flex-wrap:wrap;gap:4px}
+  .tag{border:1px solid var(--hairline);background:var(--canvas);border-radius:999px;padding:2px 8px;font-size:11px;color:var(--body)}
+  .tag.left{border-color:var(--brand-coral);color:#a8352a;font-weight:600}
+  .book{border:none;background:var(--ink);color:var(--on-primary);border-radius:8px;padding:7px 12px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+  .book:active{background:var(--primary-active)}
+  .actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .verify{border:1px solid var(--hairline);background:var(--canvas);color:var(--ink);border-radius:8px;padding:7px 12px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+  .verify:active{border-color:var(--ink)}
+  .verify.on{background:var(--ink);color:var(--on-primary);border-color:var(--ink)}
+  .empty{padding:24px;text-align:center;color:var(--muted);background:var(--surface-soft);border-radius:16px}
+  #right{position:relative;min-height:0}
+  #bugBtn{position:absolute;right:14px;bottom:52px;z-index:900;border:none;background:var(--ink);color:var(--on-primary);border-radius:12px;padding:10px 14px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+  #bugBtn:active{background:var(--primary-active)}
+  #bugPanel{position:absolute;right:14px;bottom:98px;z-index:901;width:300px;max-width:calc(100% - 28px);background:var(--canvas);border:1px solid var(--hairline);border-radius:16px;padding:14px;display:none}
+  #bugPanel.open{display:block}
+  #bugPanel h3{font-size:13px;margin-bottom:6px}
+  #bugPanel p{font-size:11px;color:var(--muted);margin:0 0 8px;text-wrap:pretty}
+  #bugPanel textarea{width:100%;min-height:90px;font:inherit;font-size:12px;color:var(--ink);background:var(--canvas);border:1px solid var(--hairline);border-radius:12px;padding:8px;resize:vertical}
+  #bugPanel textarea:focus{outline:none;border-color:var(--ink)}
+  #bugMsg{font-size:11px;color:var(--muted);margin-top:8px}
+  #map{position:absolute;inset:0}
+  .note{padding:12px 24px;border-bottom:1px solid var(--hairline);background:var(--surface-soft);font-size:11px;color:var(--muted);text-wrap:pretty}
+  .note b{color:var(--ink);font-weight:600}
+  .pin{display:flex;align-items:center;gap:0;padding:2px;border-radius:999px;background:var(--canvas);border:1.5px solid var(--ink);font-size:11px;font-weight:600;color:var(--ink);white-space:nowrap;box-shadow:0 2px 8px rgba(10,10,10,.06);cursor:pointer;width:max-content}
+  .pin i{width:9px;height:9px;border-radius:50%;display:block}
+  .pin b{display:none;padding:0 5px 0 4px}
+  .pin:hover b,.pin.sel b{display:block}
+  .pin.sel{background:var(--ink);color:var(--on-primary);border-color:var(--ink)}
+  .cluster{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--on-primary);border:2px solid var(--canvas);font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(10,10,10,.2)}
+  .venue-dot{width:18px;height:18px;background:var(--ink);border:3px solid var(--canvas);box-shadow:0 2px 8px rgba(10,10,10,.25);pointer-events:none}
+  .venue-dot.circle{border-radius:50%}
+  .venue-dot.square{border-radius:4px}
+  .venue-dot.diamond{border-radius:3px;transform:rotate(45deg)}
+  .vrow .dot.circle{border-radius:50%}
+  .vrow .dot.square{border-radius:2px}
+  .vrow .dot.diamond{border-radius:1px;transform:rotate(45deg)}
+  #right.placing{cursor:crosshair}
+  #right.placing #map{cursor:crosshair}
+  .leaflet-tooltip.venue-tt{background:var(--ink);color:var(--on-primary);border:none;border-radius:999px;padding:4px 10px;font:600 12px Inter,system-ui,sans-serif;box-shadow:none}
+  .leaflet-tooltip.venue-tt::before{border-top-color:var(--ink)}
+  .trip.legs{color:var(--muted);font-size:11px;margin-top:2px}
+  .tracerow{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer}
+  .tracerow input{width:15px;height:15px;accent-color:var(--ink);cursor:pointer}
+  .leaflet-tooltip.km-tt{background:var(--canvas);color:var(--ink);border:1px solid var(--hairline);border-radius:999px;padding:2px 8px;font:600 11px Inter,system-ui,sans-serif;box-shadow:0 1px 4px rgba(10,10,10,.12)}
+  .leaflet-tooltip.km-tt::before{display:none}
+  .leaflet-tooltip.km-tt.strong{background:var(--ink);color:var(--on-primary);border-color:var(--ink)}
+  @media (max-width:900px){
+    #app{grid-template-columns:1fr;grid-template-rows:auto 44vh minmax(0,1fr);height:100vh}
+    #rail{order:0;flex-direction:row;align-items:center;gap:8px;overflow-x:auto;padding:10px 14px;border-right:none;border-bottom:1px solid var(--hairline)}
+    #rail .rlabel{display:none}
+    #rail .elist{flex-direction:row;gap:6px}
+    .ev{width:auto}
+    #addEvent{margin-top:0;flex:none;white-space:nowrap}
+    #left{order:2;border-right:none}
+    #right{order:1;border-bottom:1px solid var(--hairline)}
+  }
+</style>
+<script src="image-slot.js"></script>
+</head>
+<body>
+<div id="app">
+  <div id="dlgWrap"><form id="dlg">
+    <h3 id="dlgTitle"></h3>
+    <input id="dlgInput" autocomplete="off">
+    <div class="dact">
+      <button type="button" class="ghost" id="dlgCancel">Annuler</button>
+      <button type="submit" class="book" id="dlgOk">Valider</button>
+    </div>
+  </form></div>
+  <button id="railToggle" title="Masquer / afficher le panneau">‹</button>
+  <nav id="rail">
+    <div class="rlabel">Événements</div>
+    <div class="elist" id="elist"></div>
+    <button id="addEvent">+ Nouvel événement</button>
+    <div class="rsec">
+      <div class="rlabel">Qui es-tu&nbsp;?</div>
+      <div class="me" id="plist"></div>
+      <button id="addPerson">+ Ajouter une personne</button>
+      <input type="file" id="avFile" accept="image/*" style="display:none">
+      <div class="rhint">Cliquez sur un avatar (ou glissez-y une photo) pour changer la photo. Profils enregistrés sur cet appareil.</div>
+    </div>
+  </nav>
+  <div id="left">
+    <header class="venue">
+      <div class="eyebrow">Mariage de <span id="wedNames" contenteditable="true" spellcheck="false" title="Cliquez pour modifier les prénoms">Jeanne &amp; Louis</span></div>
+      <image-slot id="ev-hero" shape="rounded" radius="16" placeholder="Déposez une photo du couple ou du groupe" style="height:200px;margin:10px 0 4px"></image-slot>
+      <div style="font-size:11px;color:var(--muted);margin:0 0 14px">Double-cliquez sur la photo pour la recadrer (glisser pour déplacer, molette ou coins pour zoomer, Échap pour valider).</div>
+      <div class="stay">
+        <label>Arrivée<input type="date" id="dateIn" value="2027-05-28"></label>
+        <label>Départ<input type="date" id="dateOut" value="2027-05-29"></label>
+        <span id="nights" class="nights">1 nuit</span>
+        <label>Personnes<select id="people">
+          <option value="1">1 personne</option>
+          <option value="2" selected>2 personnes</option>
+          <option value="3">3 personnes</option>
+          <option value="4">4 personnes</option>
+          <option value="6">6 personnes et +</option>
+        </select></label>
+      </div>
+      <div class="addr">Distances et trajets calculés depuis le lieu sélectionné</div>
+      <div class="venues" id="venues"></div>
+      <div class="actions" style="margin-top:12px">
+        <button class="book" id="searchNearby">Rechercher les hébergements autour de ces lieux</button>
+      </div>
+      <div class="dstat" id="dstat" data-comment-anchor="96764c6c9f-div"></div>
+    </header>
+
+    <div class="recap" id="recap"></div>
+
+    <div class="panel">
+      <div class="flabel">Type d'hébergement</div>
+      <div class="chips" id="typeChips"></div>
+      <div class="rows">
+        <div class="row">
+          <div class="top"><span class="flabel" style="margin:0">Budget par nuit</span><span class="val" id="budgetVal"></span></div>
+          <div class="slabel">Prix minimum</div>
+          <input type="range" id="budgetMin" min="30" max="320" step="5">
+          <div class="slabel">Prix maximum</div>
+          <input type="range" id="budgetMax" min="30" max="320" step="5">
+        </div>
+        <div class="row">
+          <div class="top"><span class="flabel" style="margin:0">Distance max</span><span class="val" id="distVal"></span></div>
+          <input type="range" id="dist" min="1" max="25" step="1">
+        </div>
+        <div class="row">
+          <label class="tracerow"><input type="checkbox" id="trace"><span>Tracer les trajets entre les trois lieux</span></label>
+          <span class="vhint">Itinéraires routiers entre mairie, église et lieu de réception, avec distance et temps de trajet.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="note" id="note">Fond de carte Mapbox. Distances et temps voiture calculés par OSRM depuis le lieu de référence ; à pied et en bus estimés (≈). Adresses réelles pour tous les hébergements sauf les locations de particuliers, dont l'adresse n'est communiquée qu'après réservation — leur repère est placé au quartier et peut être <b>glissé</b>. <b>Tarifs et disponibilités indicatifs</b> pour mai 2027, à confirmer auprès de chaque établissement ; les notes et avis ne sont pas reproduits ici — utilisez le lien « Voir les avis » de chaque logement.</div>
+
+    <div class="sortbar">
+      <div class="chips" id="sortChips"></div>
+      <div class="count" id="count"></div>
+    </div>
+
+    <div id="list"></div>
+  </div>
+
+  <div id="right">
+    <button id="bugBtn">Signaler un bug</button>
+    <div id="bugPanel">
+      <h3>Signaler un problème</h3>
+      <p>Décrivez ce qui ne fonctionne pas. Le message est enregistré sur cet appareil ; vous pouvez aussi l'envoyer par e-mail.</p>
+      <textarea id="bugText" placeholder="ex. les avatars n'apparaissent pas sur la carte"></textarea>
+      <div class="actions" style="margin-top:8px">
+        <button class="book" id="bugSave">Enregistrer</button>
+        <a class="verify" id="bugMail" href="#">Envoyer par e-mail</a>
+      </div>
+      <div id="bugMsg"></div>
+    </div>
+    <div id="map"></div>
+  </div>
+</div>
+
+<script>
+var PEOPLE=[], STAYS={}, MEID=null;
+const VENUES = [
+  {id:"mairie",   label:"Mairie de Biarritz",      addr:"1 avenue Édouard VII, 64200 Biarritz", color:"#0a0a0a", shape:"square",  lat:43.48318, lon:-1.55873},
+  {id:"eglise",   label:"Église Sainte-Eugénie",   addr:"Place Sainte-Eugénie, 64200 Biarritz",  color:"#e8b94a", shape:"diamond", lat:43.4845, lon:-1.5622},
+  {id:"reception",label:"Lieu de réception",       addr:"À préciser — cliquez pour le placer sur la carte", color:"#a4d4c5", shape:"circle", lat:null, lon:null}
+];
+const venueById = id=>VENUES.find(v=>v.id===id);
+const VENUE_KEY="hm-venues-v1";
+function saveVenues(){
+  try{
+    const o={ref:(typeof state!=="undefined"?state.ref:"mairie"), v:{}, labels:{},
+             blank:VENUES.every(v=>v.lat==null)};
+    VENUES.forEach(v=>{o.v[v.id]={lat:v.lat,lon:v.lon,addr:v.addr,geo:!!v.geo};o.labels[v.id]=v.label;});
+    localStorage.setItem(VENUE_KEY,JSON.stringify(o));
+  }catch(e){}
+}
+function restoreVenues(){
+  try{
+    const o=JSON.parse(localStorage.getItem(VENUE_KEY)||"null"); if(!o) return null;
+    if(o.blank){
+      VENUES.forEach((v,i)=>{
+        v.lat=null; v.lon=null; v.geo=false;
+        v.label=["Cérémonie civile","Cérémonie religieuse","Lieu de réception"][i]||v.label;
+        v.addr="À préciser — saisissez l'adresse ou cliquez sur la carte";
+      });
+      return o.ref||null;
+    }
+    VENUES.forEach(v=>{
+      const s=o.v&&o.v[v.id]; if(!s) return;
+      if(s.lat!=null&&s.lon!=null){v.lat=s.lat;v.lon=s.lon;}
+      if(s.addr) v.addr=s.addr;
+      if(s.geo) v.geo=true;
+      if(o.labels&&o.labels[v.id]) v.label=o.labels[v.id];
+    });
+    return o.ref||null;
+  }catch(e){return null;}
+}
+const savedRef=restoreVenues();
+
+const TYPES = {
+  hotel:   {label:"Hôtel",           bg:"#ff4d8b", fg:"#ffffff"},
+  location:{label:"Airbnb / location",bg:"#b8a4ed", fg:"#0a0a0a"},
+  chambre: {label:"Chambre d'hôtes",  bg:"#ffb084", fg:"#0a0a0a"},
+  camping: {label:"Camping",          bg:"#1a3a3a", fg:"#ffffff"}
+};
+
+const DATA = [
+  {id:"cafedeparis", name:"Hôtel Café de Paris", type:"hotel", lat:43.48295, lon:-1.56133, addr:"5 Place Bellevue, 64200 Biarritz", geo:true, fixed:true, price:210, rating:8.4, reviews:912, cap:2, area:"Place Bellevue, Biarritz", extras:["Parking payant","Annulation gratuite"], left:3, url:"https://www.google.com/maps/search/?api=1&query=H%C3%B4tel%20Caf%C3%A9%20de%20Paris%205%20place%20Bellevue%20Biarritz"},
+  {id:"windsor", name:"Le Windsor Grande Plage", type:"hotel", lat:43.48389, lon:-1.55845, addr:"11 avenue Édouard VII, 64200 Biarritz", geo:true, fixed:true, price:175, rating:8.3, reviews:1480, cap:3, area:"Grande Plage, Biarritz", extras:["Vue mer","Annulation gratuite"], left:5, url:"https://www.google.com/maps/search/?api=1&query=Le%20Windsor%20Grande%20Plage%2011%20avenue%20Edouard%20VII%20Biarritz"},
+  {id:"lierre", name:"La Maison du Lierre", type:"hotel", lat:43.48016, lon:-1.56075, addr:"3 avenue du Jardin Public, 64200 Biarritz", geo:true, fixed:true, price:145, rating:8.8, reviews:640, cap:2, area:"Rue du Port-Vieux, Biarritz", extras:["Jardin","Annulation gratuite"], left:2, url:"https://www.hotel-maisondulierre-biarritz.com/"},
+  {id:"stjulien", name:"Hôtel Saint-Julien", type:"hotel", lat:43.47912, lon:-1.56234, addr:"20 avenue Carnot, 64200 Biarritz", geo:true, fixed:true, price:125, rating:8.6, reviews:410, cap:2, area:"Avenue Carnot, Biarritz", extras:["Parking gratuit","Annulation gratuite"], left:4, url:"https://hotel-saint-julien-biarritz.fr/"},
+  {id:"alizes", name:"Hôtel Les Alizés", type:"hotel", lat:43.48209, lon:-1.56621, addr:"13 rue du Port-Vieux, 64200 Biarritz", geo:true, fixed:true, price:110, rating:8.1, reviews:288, cap:2, area:"Port-Vieux, Biarritz", extras:["À pied du lieu"], left:1, url:"https://www.hotel-lesalizes-biarritz.com/"},
+  {id:"boncoin", name:"Hôtel Au Bon Coin", type:"hotel", lat:43.4806, lon:-1.5535, price:95, rating:8.2, reviews:355, cap:2, area:"Avenue de Verdun, Biarritz", extras:["Parking gratuit"], left:6, url:"https://www.google.com/maps/search/?api=1&query=H%C3%B4tel%20Au%20Bon%20Coin%205%20rue%20de%20la%20Cit%C3%A9%20Biarritz"},
+  {id:"txutxu", name:"Hôtel Txutxu-Mutxu", type:"hotel", lat:43.48394, lon:-1.54898, addr:"44 avenue de la Marne, 64200 Biarritz", geo:true, fixed:true, price:105, rating:7.9, reviews:520, cap:4, area:"Quartier Saint-Charles, Biarritz", extras:["Parking gratuit","Annulation gratuite"], left:8, url:"https://www.google.com/maps/search/?api=1&query=H%C3%B4tel%20Txutxu%20Mutxu%2044%20avenue%20de%20la%20Marne%20Biarritz"},
+  {id:"arima", name:"Maison d'hôtes Arima", type:"chambre", lat:43.4795, lon:-1.5560, price:140, rating:9.3, reviews:210, cap:2, area:"Centre, Biarritz", extras:["Piscine chauffée","Petit-déjeuner inclus"], left:2, url:"https://www.arima-biarritz.com/"},
+  {id:"cuevas", name:"Maison Cuevas", type:"chambre", lat:43.48439, lon:-1.54106, addr:"41 rue de l'Estagnas, 64200 Biarritz", geo:true, fixed:true, price:265, rating:9.5, reviews:96, cap:2, area:"41 rue de l'Estagnas, Biarritz", extras:["Piscine","Adultes uniquement"], left:1, url:"https://www.maisoncuevas.com/en/"},
+  {id:"voletsbleus", name:"Les Volets Bleus", type:"chambre", lat:43.4192, lon:-1.5084, addr:"Chemin d\'Etchegaraya, 64200 Arcangues", geo:true, fixed:true, price:160, rating:9.4, reviews:180, cap:4, area:"Arcangues", extras:["Parking gratuit","Petit-déjeuner inclus","Navette possible"], left:3, url:"https://www.lesvoletsbleus.fr/"},
+  {id:"etchebri", name:"Villa Etchebri — Maison d'hôtes", type:"chambre", lat:43.50874, lon:-1.52388, addr:"9 avenue de la Forêt, 64600 Anglet", geo:true, fixed:true, price:135, rating:9.1, reviews:140, cap:3, area:"Anglet", extras:["Piscine","Parking gratuit"], left:4, url:"https://www.google.com/maps/search/?api=1&query=Villa%20Etchebri%209%20avenue%20de%20la%20For%C3%AAt%20Anglet"},
+  {id:"tourelles", name:"Les Tourelles", type:"chambre", lat:43.48187, lon:-1.55509, addr:"37 avenue de Verdun, 64200 Biarritz", geo:true, fixed:true, price:115, rating:8.7, reviews:230, cap:4, area:"Biarritz, proche gare", extras:["Jardin","Parking gratuit"], left:5, url:"https://www.google.com/maps/search/?api=1&query=Les%20Tourelles%2037%20avenue%20de%20Verdun%20Biarritz"},
+  {id:"portvieux", name:"Studio Port-Vieux (location)", type:"location", lat:43.48247, lon:-1.56472, price:105, rating:4.8, scale:5, reviews:64, cap:2, area:"Port-Vieux, Biarritz", extras:["Annulation gratuite","Cuisine équipée"], left:1, url:"https://www.airbnb.fr/s/Biarritz--Port-Vieux/homes"},
+  {id:"halles", name:"Appartement Les Halles (location)", type:"location", lat:43.48082, lon:-1.55839, price:120, rating:4.9, scale:5, reviews:112, cap:4, area:"Les Halles, Biarritz", extras:["Parking en option","Annulation gratuite"], left:2, url:"https://www.airbnb.fr/s/Biarritz--Les-Halles/homes"},
+  {id:"ilbarritzapt", name:"Appartement vue mer Ilbarritz", type:"location", lat:43.46520, lon:-1.57402, price:165, rating:4.7, scale:5, reviews:88, cap:4, area:"Bidart", extras:["Piscine","Parking gratuit","Navette possible"], left:2, url:"https://www.airbnb.fr/s/Bidart--Ilbarritz/homes"},
+  {id:"palmito", name:"Palmito (maison d'hôtes)", type:"chambre", lat:43.43614, lon:-1.57540, addr:"14 rue Hiri Artea, 64210 Bidart", geo:true, fixed:true, price:125, rating:9.0, reviews:150, cap:2, area:"Bidart", extras:["Parking gratuit","Petit-déjeuner inclus"], left:3, url:"https://www.google.com/maps/search/?api=1&query=Palmito%2014%20rue%20Hiri%20Artea%20Bidart"},
+  {id:"fronton", name:"Hôtel du Fronton", type:"hotel", lat:43.43836, lon:-1.59203, addr:"Place Sauveur Atchoarena, 64210 Bidart", geo:true, fixed:true, price:null, cap:2, area:"Bidart", extras:["3 étoiles, centre du village","tarif à confirmer"], url:"https://www.google.com/maps/search/?api=1&query=H%C3%B4tel%20du%20Fronton%20Place%20Sauveur%20Atchoarena%2C%2064210%20Bidart"},
+  {id:"gochoki", name:"Hôtel Gochoki", type:"hotel", lat:43.43585, lon:-1.5884, addr:"2 rue Burruntz, 64210 Bidart", geo:true, fixed:true, price:null, cap:2, area:"Bidart", extras:["3 étoiles, piscine chauffée","tarif à confirmer"], url:"https://www.google.com/maps/search/?api=1&query=H%C3%B4tel%20Gochoki%202%20rue%20Burruntz%2C%2064210%20Bidart"},
+  {id:"itsasmendia", name:"Hôtel Itsas Mendia", type:"hotel", lat:43.44231, lon:-1.59485, addr:"Rue Erretegia, 64210 Bidart", geo:true, fixed:true, price:null, cap:2, area:"Bidart", extras:["Piscine chauffée, centre de Bidart","tarif à confirmer"], url:"https://www.google.com/maps/search/?api=1&query=H%C3%B4tel%20Itsas%20Mendia%20Rue%20Erretegia%2C%2064210%20Bidart"},
+  {id:"villaarche", name:"Hôtel La Villa l\u2019Arche", type:"hotel", lat:43.43083, lon:-1.59619, addr:"Chemin Camboenea, 64210 Bidart", geo:true, fixed:true, price:null, cap:2, area:"Bidart", extras:["4 étoiles, 9 chambres, front de mer","tarif à confirmer"], url:"https://www.google.com/maps/search/?api=1&query=H%C3%B4tel%20La%20Villa%20l%5Cu2019Arche%20Chemin%20Camboenea%2C%2064210%20Bidart"},
+  {id:"fregate", name:"Hôtel Miléade La Frégate", type:"hotel", lat:43.43172, lon:-1.5906, addr:"355 avenue d\u2019Espagne, 64210 Bidart", geo:true, fixed:true, price:null, cap:2, area:"Bidart", extras:["Vue océan, plage de l\u2019Uhabia","tarif à confirmer"], url:"https://www.google.com/maps/search/?api=1&query=H%C3%B4tel%20Mil%C3%A9ade%20La%20Fr%C3%A9gate%20355%20avenue%20d%5Cu2019Espagne%2C%2064210%20Bidart"},
+  {id:"fasthotel", name:"FastHôtel Biarritz Bidart Côte Basque", type:"hotel", lat:43.4477, lon:-1.5747, addr:"Rue Kintzea, 64210 Bidart", geo:true, fixed:true, price:null, cap:2, area:"Bidart", extras:["Économique, proche A63","tarif à confirmer"], url:"https://www.google.com/maps/search/?api=1&query=FastH%C3%B4tel%20Biarritz%20Bidart%20C%C3%B4te%20Basque%20Rue%20Kintzea%2C%2064210%20Bidart"},
+  {id:"ibarboure", name:"Les Frères Ibarboure", type:"hotel", lat:43.4209, lon:-1.5848, addr:"Chemin Talienea, 64210 Bidart", geo:true, fixed:true, price:null, cap:2, area:"Bidart", extras:["4 étoiles, spa, restaurant étoilé","tarif à confirmer"], url:"https://www.google.com/maps/search/?api=1&query=Les%20Fr%C3%A8res%20Ibarboure%20Chemin%20Talienea%2C%2064210%20Bidart"},
+  {id:"catarie", name:"Hôtel Villa Catarie", type:"hotel", lat:43.4225, lon:-1.6086, addr:"415 avenue du Général de Gaulle, 64210 Guéthary", geo:true, fixed:true, price:null, cap:2, area:"Guéthary", extras:["4 étoiles, 15 chambres, piscine","tarif à confirmer"], url:"https://www.google.com/maps/search/?api=1&query=H%C3%B4tel%20Villa%20Catarie%20415%20avenue%20du%20G%C3%A9n%C3%A9ral%20de%20Gaulle%2C%2064210%20Gu%C3%A9thary"},
+  {id:"ilbarritzcamp", name:"Yelloh! Village Ilbarritz", type:"camping", lat:43.4622, lon:-1.5834, price:62, rating:8.0, reviews:930, cap:6, area:"Bidart", extras:["Parking gratuit","Mobil-home 4–6 pers."], left:9, url:"https://www.camping-ilbarritz.com/en"},
+  {id:"biarritzcamping", name:"Biarritz Camping", type:"camping", lat:43.46217, lon:-1.567, addr:"28 rue d\'Harcet, 64200 Biarritz", geo:true, fixed:true, price:48, rating:7.8, reviews:640, cap:4, area:"Avenue de Biarritz, Biarritz", extras:["Parking gratuit","Annulation gratuite"], left:12, url:"https://www.biarritz-camping.fr/en"},
+  {id:"ruisseau", name:"Camping Le Ruisseau des Pyrénées", type:"camping", lat:43.43671, lon:-1.56712, addr:"Rue Burruntz, 64210 Bidart", geo:true, fixed:true, price:74, rating:8.5, reviews:1210, cap:6, area:"Bidart", extras:["Parc aquatique","Parking gratuit"], left:7, url:"https://www.camping-le-ruisseau.fr/en/"},
+  {id:"oyam", name:"Camping Oyam", type:"camping", lat:43.43581, lon:-1.5829, addr:"254 rue d'Oyamburua, 64210 Bidart", geo:true, fixed:true, price:58, rating:8.3, reviews:870, cap:6, area:"Bidart", extras:["Piscine chauffée","Parking gratuit"], left:10, url:"https://www.camping-oyam.com/"},
+  {id:"etxea", name:"Etxea & Co", type:"chambre", lat:43.43491, lon:-1.59217, addr:"7 rue Ibai Eder, 64210 Bidart", geo:true, fixed:true, price:165, rating:9.2, reviews:19, cap:4, area:"Bidart", extras:["Piscine chauffée","Petit-déjeuner inclus","Parking gratuit"], left:2, url:"https://etxea-and-co.com/fr/"},
+  {id:"erreka", name:"Camping Erreka — Sea Green", type:"camping", lat:43.44405, lon:-1.58052, addr:"370 avenue Cumba, 64210 Bidart", geo:true, fixed:true, price:66, rating:8.1, reviews:430, cap:5, area:"Bidart", extras:["Piscine chauffée","Parking gratuit"], left:11, url:"https://www.google.com/maps/search/?api=1&query=Camping%20Erreka%20370%20avenue%20Cumba%20Bidart"}
+];
+
+function haversine(a,b){
+  const R=6371, dLat=(b.lat-a.lat)*Math.PI/180, dLon=(b.lon-a.lon)*Math.PI/180;
+  const la1=a.lat*Math.PI/180, la2=b.lat*Math.PI/180;
+  const h=Math.sin(dLat/2)**2+Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.sqrt(h));
+}
+function mins(m){m=Math.round(m);return m<60?m+" min":Math.floor(m/60)+" h "+String(m%60).padStart(2,"0");}
+
+function recompute(){
+  const ref=venueById(state.ref);
+  const origin = (ref && ref.lat!=null) ? ref : venueById("mairie");
+  DATA.forEach(h=>{
+    h.crow = haversine(origin,h);
+    const r = h.routes && h.routes[origin.id];
+    h.routed = !!r;
+    h.km = r ? r.km : h.crow*1.3;
+    h.car = r ? r.sec/60 : h.km/26*60+3;
+    h.walk = h.km < 4.5 ? h.km/4.7*60 : null;
+    h.bus = h.km >= 1.2 && h.km < 11 ? h.km/15*60 + 9 : null;
+    h.byVenue={};
+    VENUES.forEach(v=>{
+      if(v.lat==null) return;
+      const rv = h.routes && h.routes[v.id];
+      h.byVenue[v.id] = rv ? rv.km : haversine(v,h)*1.3;
+    });
+    const all=Object.values(h.byVenue);
+    h.worst = all.length ? Math.max.apply(null,all) : h.km;
+  });
+}
+
+const state = {
+  types:new Set(Object.keys(TYPES)),
+  min:80, max:250, dist:25, people:2, sort:"distance", sel:null, trace:false, allThree:true, routeFrom:null, ref:(savedRef&&venueById(savedRef)?savedRef:"mairie"), placing:false, editing:null, sug:[], sugIdx:-1, noPrice:true, poiNotice:"", tileNotice:"", geoNotice:""
+};
+recompute();
+
+const $ = s=>document.querySelector(s);
+const list = $("#list");
+
+/* Colle ici ton token public Mapbox (pk....) pour la cartographie Mapbox ;
+   sans token, la carte utilise les tuiles OpenStreetMap. */
+const MAPBOX_TOKEN = "pk.VOTRE_JETON_MAPBOX";
+const MAPBOX_STYLE = "mapbox/outdoors-v12";
+
+const markers = {};
+function initMap(){
+  map = L.map("map",{zoomControl:true, scrollWheelZoom:true}).setView([43.470,-1.560],13);
+  if(MAPBOX_TOKEN){
+    const mb=L.tileLayer("https://api.mapbox.com/styles/v1/"+MAPBOX_STYLE+"/tiles/512/{z}/{x}/{y}@2x?access_token="+MAPBOX_TOKEN,
+      {maxZoom:20, tileSize:512, zoomOffset:-1, crossOrigin:true,
+       attribution:'© Mapbox © OpenStreetMap <a href="https://www.mapbox.com/map-feedback/" target="_blank" rel="noopener">Improve this map</a>'}).addTo(map);
+    let ok=0, errs=0, done=false;
+    mb.on("tileload",()=>{ok++;});
+    mb.on("tileerror",e=>{
+      if(e.tile && !e.tile.dataset.retried){
+        e.tile.dataset.retried="1";
+        e.tile.src=e.tile.src+"&r="+Date.now();
+        return;
+      }
+      errs++;
+      if(done || ok>0 || errs<4) return;
+      done=true;
+      map.removeLayer(mb);
+      state.tileNotice="Tuiles Mapbox refusées — carte OpenStreetMap utilisée. Vérifiez les restrictions d'URL et le scope du token.";
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {maxZoom:19, attribution:"© OpenStreetMap contributors"}).addTo(map);
+      setStatus();
+    });
+  }else{
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+      {maxZoom:19, attribution:"© OpenStreetMap contributors"}).addTo(map);
+  }
+  map.on("click",onMapClick);
+  map.on("zoomend",cluster);
+  map.on("moveend",cluster);
+  DATA.forEach(h=>{
+    const t=TYPES[h.type];
+    const m=L.marker([h.lat,h.lon],{
+      draggable:true, autoPan:true,
+      icon:L.divIcon({className:"", html:'<div class="pin"><i style="background:'+t.bg+'"></i><b>'+h.price+' €</b></div>', iconSize:[15,15], iconAnchor:[7,7]})
+    });
+    m.on("dragend",()=>{
+      const p=m.getLatLng();
+      h.lat=p.lat; h.lon=p.lng; h.geo=true; h.addr="Position ajustée · "+p.lat.toFixed(5)+", "+p.lng.toFixed(5);
+      const c=geoCache(); c[h.id]={lat:h.lat,lon:h.lon,addr:h.addr}; geoCacheSave(c);
+      if(h.routes) delete h.routes;
+      recompute(); render(); refreshRoutes();
+    });
+    m.on("click",()=>select(h.id,"map"));
+    m.bindTooltip(h.name+" · "+h.price+" €",{direction:"top",offset:[0,-8]});
+    markers[h.id]=m;
+  });
+}
+let map;
+
+const venueMarkers = {};
+function drawVenues(){
+  VENUES.forEach(v=>{
+    if(v.lat==null){
+      if(venueMarkers[v.id]){map.removeLayer(venueMarkers[v.id]);delete venueMarkers[v.id];}
+      return;
+    }
+    const isRef = state.ref===v.id;
+    const html='<div class="venue-dot '+v.shape+'" style="background:'+v.color+';'+(isRef?'width:22px;height:22px':'')+'"></div>';
+    const icon=L.divIcon({className:"", html:html, iconSize:[22,22], iconAnchor:[11,11]});
+    const tipOpts={permanent:isRef, direction:"top", offset:[0,-12], className:"venue-tt"};
+    if(venueMarkers[v.id]){
+      const m=venueMarkers[v.id];
+      m.setLatLng([v.lat,v.lon]).setIcon(icon);
+      m.unbindTooltip().bindTooltip(v.label,tipOpts);
+      m.setZIndexOffset(isRef?1200:1000);
+    }else{
+      venueMarkers[v.id]=L.marker([v.lat,v.lon],{zIndexOffset:isRef?1200:1000,icon:icon,interactive:false})
+        .addTo(map)
+        .bindTooltip(v.label,tipOpts);
+    }
+  });
+}
+
+function farFromVenues(h){
+  const p=VENUES.filter(v=>v.lat!=null);
+  if(!p.length) return false;
+  return p.every(v=>haversine({lat:h.lat,lon:h.lon},{lat:v.lat,lon:v.lon})>60);
+}
+function pass(h){
+  if(farFromVenues(h)) return false;
+  if(!state.types.has(h.type)) return false;
+  if(h.price!=null && (h.price<state.min||h.price>state.max)) return false;
+  if(h.price==null && !state.noPrice) return false;
+  if((state.allThree ? h.worst : h.km) > state.dist) return false;
+  if(h.cap!=null && h.cap<state.people) return false;
+  return true;
+}
+function sorted(rows){
+  const num=(v,fb)=>v==null?fb:v;
+  const c={distance:(a,b)=>a.km-b.km,
+    prix:(a,b)=>num(a.price,1e6)-num(b.price,1e6),
+    note:(a,b)=>num(b.rating&&b.rating/(b.scale?5:10),-1)-num(a.rating&&a.rating/(a.scale?5:10),-1)};
+  return rows.slice().sort(c[state.sort]);
+}
+
+function ratingStr(h){
+  return h.scale ? h.rating.toFixed(1)+"/5" : h.rating.toFixed(1)+"/10";
+}
+
+function mapsLink(h){
+  const ref=venueById(state.ref), o=(ref&&ref.lat!=null)?ref:venueById("mairie");
+  return "https://www.google.com/maps/dir/?api=1&origin="+o.lat.toFixed(5)+","+o.lon.toFixed(5)
+    +"&destination="+encodeURIComponent(h.name.replace(/\s*\(.*?\)\s*/g," ").trim()+", "+h.area.split(",").pop().trim());
+}
+
+function reviewsLink(h){
+  const q=h.name.replace(/\s*\(.*?\)\s*/g," ").trim()+" "+(h.addr||h.area)+" avis";
+  return "https://www.google.com/search?q="+encodeURIComponent(q);
+}
+function photosLink(h){
+  const q=h.name.replace(/\s*\(.*?\)\s*/g," ").trim()+" "+(h.addr||h.area);
+  return "https://www.google.com/search?tbm=isch&q="+encodeURIComponent(q);
+}
+function cardHTML(h){
+  const t=TYPES[h.type];
+  const kmTxt = h.routed
+    ? '<span><b>'+h.km.toFixed(1)+' km</b> par la route</span>'
+    : '<span><b>'+h.crow.toFixed(1)+' km</b> à vol d\'oiseau</span>';
+  const trips=[];
+  trips.push("<span>Voiture <b>"+(h.routed?"":"≈")+mins(h.car)+"</b></span>");
+  if(h.walk) trips.push("<span>À pied <b>≈"+mins(h.walk)+"</b></span>");
+  if(h.bus) trips.push("<span>Bus <b>≈"+mins(h.bus)+"</b></span>");
+  const legs = VENUES.filter(v=>v.lat!=null && h.byVenue && h.byVenue[v.id]!=null)
+    .map(v=>'<span>'+(v.id==="reception"?"Réception":v.label.split(" ")[0])+' <b>'+h.byVenue[v.id].toFixed(1)+' km</b></span>').join("");
+  const extras = (h.extras||[]).map(e=>'<span class="tag">'+e+'</span>').join("")
+    + (h.left!=null ? '<span class="tag left">'+h.left+' logement'+(h.left>1?'s':'')+' restant'+(h.left>1?'s':'')+'</span>' : '<span class="tag">disponibilité à vérifier</span>');
+  return '<article class="card'+(state.sel===h.id?' sel':'')+'" data-id="'+h.id+'" tabindex="0">'
+    + '<div class="meta">'
+    +   '<div class="headline"><div>'
+    +     '<span class="badge" style="background:'+t.bg+';color:'+t.fg+'">'+t.label+'</span>'
+    +     '<h3 style="margin-top:6px">'+h.name+'</h3>'
+    +     '<div style="font-size:12px;color:var(--muted)">'+(h.addr||h.area)+(h.geo?'':(h.type==="location"?' · adresse communiquée après réservation':' · position approchée'))+'</div>'
+    +   '</div>'+(h.price!=null?'<div class="price">'+h.price+' €<br><span>/ nuit</span></div>':'<div class="price" style="font-size:12px;font-weight:500;color:var(--muted)">tarif<br><span>à vérifier</span></div>')+'</div>'
+    +   '<div class="trip">'+kmTxt+trips.join("")+'</div>'
+    +   (legs?'<div class="trip legs">'+legs+'</div>':'')
+    +   '<div class="rating" style="font-weight:500;color:var(--muted)"><a href="'+reviewsLink(h)+'" target="_blank" rel="noopener" style="color:var(--ink)">Voir les avis</a> · note à vérifier sur le site</div>'
+    +   '<div class="extras">'+extras+'</div>'
+    +   '<div class="actions"><a class="book" href="'+bookUrl(h)+'" target="_blank" rel="noopener">Voir / réserver</a>'
+    +     (h.site?'<a class="verify" href="'+h.site+'" target="_blank" rel="noopener">Site officiel</a>':'')
+    +     '<button class="verify'+(state.routeFrom===h.id?' on':'')+'" data-route="'+h.id+'">'+(state.routeFrom===h.id?'Masquer les trajets':'Itinéraire vers les 3 lieux')+'</button>'
+    +     '<a class="verify" href="'+mapsLink(h)+'" target="_blank" rel="noopener">Google Maps</a>'
+    +     '<a class="verify" href="'+photosLink(h)+'" target="_blank" rel="noopener">Photos</a>'
+    +     sleepBtn(h)+'</div>'
+    +   sleepersHTML(h)
+    + '</div></article>';
+}
+
+function render(){
+  const rows = sorted(DATA.filter(pass));
+  const ref=venueById(state.ref);
+  const origin=(ref&&ref.lat!=null)?ref:venueById("mairie");
+  $("#count").textContent = rows.length + (rows.length===1?" hébergement":" hébergements") + " · " + origin.label;
+  list.innerHTML = rows.length
+    ? rows.map(cardHTML).join("")
+    : '<div class="empty">Aucun hébergement ne correspond. Élargissez le budget ou la distance.</div>';
+  const ids=new Set(rows.map(r=>r.id));
+  state.visible=ids;
+  cluster();
+}
+
+const clusterMarkers=[];
+let clustering=false;
+function cluster(){
+  if(!map || clustering) return;
+  clustering=true;
+  clusterMarkers.forEach(m=>map.removeLayer(m));
+  clusterMarkers.length=0;
+  const vis=state.visible||new Set();
+  DATA.forEach(h=>{const m=markers[h.id]; if(map.hasLayer(m)) map.removeLayer(m);});
+  const pts=DATA.filter(h=>vis.has(h.id)).map(h=>({h,p:map.latLngToContainerPoint([h.lat,h.lon])}));
+  const pinOut=id=>state.sel===id||sleepersOf(id).length>0;
+  const used=new Set(), groups=[];
+  pts.forEach(a=>{
+    if(used.has(a.h.id)) return;
+    used.add(a.h.id);
+    const g=[a];
+    if(!pinOut(a.h.id)){
+      pts.forEach(b=>{
+        if(used.has(b.h.id) || pinOut(b.h.id)) return;
+        if(a.p.distanceTo(b.p)<30){g.push(b);used.add(b.h.id);}
+      });
+    }
+    groups.push(g);
+  });
+  // fusion des groupes dont les pastilles se recouvriraient encore
+  const ctr=g=>({x:g.reduce((s,x)=>s+x.p.x,0)/g.length, y:g.reduce((s,x)=>s+x.p.y,0)/g.length});
+  for(let pass=0;pass<4;pass++){
+    let merged=false;
+    for(let i=0;i<groups.length&&!merged;i++){
+      for(let j=i+1;j<groups.length;j++){
+        if(groups[i].some(x=>pinOut(x.h.id))||groups[j].some(x=>pinOut(x.h.id))) continue;
+        const a=ctr(groups[i]), b=ctr(groups[j]);
+        if(Math.hypot(a.x-b.x,a.y-b.y)<30){
+          groups[i]=groups[i].concat(groups[j]);
+          groups.splice(j,1);
+          merged=true; break;
+        }
+      }
+    }
+    if(!merged) break;
+  }
+  const venuePts=VENUES.filter(v=>v.lat!=null).map(v=>map.latLngToContainerPoint([v.lat,v.lon]));
+  groups.forEach(g=>{
+    if(g.length===1){ markers[g[0].h.id].addTo(map); return; }
+    const lat=g.reduce((s,x)=>s+x.h.lat,0)/g.length, lon=g.reduce((s,x)=>s+x.h.lon,0)/g.length;
+    const min=Math.min.apply(null,g.map(x=>x.h.price==null?Infinity:x.h.price));
+    const cm=L.marker([lat,lon],{zIndexOffset:1400,
+      icon:L.divIcon({className:"", html:'<div class="cluster">'+g.length+'</div>', iconSize:[26,26], iconAnchor:[13,13]})});
+    cm.on("click",()=>{
+      const b=L.latLngBounds(g.map(x=>[x.h.lat,x.h.lon]));
+      map.fitBounds(b.pad(0.5),{maxZoom:17,padding:[50,50]});
+    });
+    cm.bindTooltip(g.length+" hébergements ici"+(isFinite(min)?", dès "+min+" €":"")+" — cliquez pour zoomer",{direction:"top",offset:[0,-12]});
+    cm.addTo(map);
+    clusterMarkers.push(cm);
+  });
+  paintPins();
+  clustering=false;
+  drawTraces();
+}
+
+const traceLayers=[];
+let traceGen=0;
+const geomCache={};
+function traceOrigin(){
+  const ref=venueById(state.ref);
+  return (ref&&ref.lat!=null)?ref:venueById("mairie");
+}
+function drawTraces(){
+  if(!map) return;
+  traceGen++;
+  traceLayers.forEach(l=>map.removeLayer(l));
+  traceLayers.length=0;
+  const placed=VENUES.filter(v=>v.lat!=null);
+  if(state.routeFrom){
+    const h=DATA.find(d=>d.id===state.routeFrom);
+    if(h) placed.forEach(v=>drawVenueLeg({id:h.id,label:h.name,lat:h.lat,lon:h.lon},v));
+  }
+  if(!state.trace) return;
+  for(let i=0;i<placed.length;i++)
+    for(let j=i+1;j<placed.length;j++) drawVenueLeg(placed[i],placed[j]);
+}
+async function drawVenueLeg(a,b){
+  const key=a.id+"|"+b.id, gen=traceGen;
+  const guide=L.polyline([[a.lat,a.lon],[b.lat,b.lon]],
+    {color:"#6f6f6f",weight:1.2,opacity:.35,dashArray:"4 5",interactive:false}).addTo(map);
+  traceLayers.push(guide);
+  try{
+    if(!geomCache[key]){
+      const c=a.lon.toFixed(5)+","+a.lat.toFixed(5)+";"+b.lon.toFixed(5)+","+b.lat.toFixed(5);
+      const r=await fetch("https://router.project-osrm.org/route/v1/driving/"+c+"?overview=full&geometries=geojson");
+      if(!r.ok) return;
+      const j=await r.json();
+      const rt=j.routes&&j.routes[0]; if(!rt) return;
+      geomCache[key]={coords:rt.geometry.coordinates.map(p=>[p[1],p[0]]), km:rt.distance/1000, min:rt.duration/60};
+    }
+    if(gen!==traceGen || (!state.trace && !state.routeFrom)) return;
+    const hh=DATA.find(d=>d.id===a.id);
+    if(hh && venueById(b.id) && !(hh.routes&&hh.routes[b.id])){
+      hh.routes=hh.routes||{};
+      hh.routes[b.id]={km:geomCache[key].km, sec:geomCache[key].min*60};
+      recompute(); list.querySelectorAll('.card[data-id="'+hh.id+'"]').forEach(c=>c.outerHTML=cardHTML(hh));
+    }
+    const g=geomCache[key];
+    map.removeLayer(guide);
+    const road=L.polyline(g.coords,{color:"#0a0a0a",weight:3.5,opacity:.85,lineJoin:"round"}).addTo(map);
+    const txt = g.km<1
+      ? Math.round(g.km*1000)+" m \u00b7 "+mins(Math.max(g.min, g.km*12))+" \u00e0 pied"
+      : g.km.toFixed(1)+" km \u00b7 "+mins(g.min)+" en voiture";
+    road.bindTooltip(a.label+" \u2192 "+b.label+"<br>"+txt,
+      {className:"km-tt strong",permanent:true,direction:"center",opacity:1});
+    traceLayers.push(road);
+  }catch(e){}
+}
+
+const ringLayers=[];
+function drawRings(){
+  if(!map) return;
+  ringLayers.forEach(l=>map.removeLayer(l)); ringLayers.length=0;
+  if(!state.rings) return;
+  VENUES.filter(v=>v.lat!=null).forEach(v=>{
+    RINGS.forEach(km=>{
+      const c=L.circle([v.lat,v.lon],{radius:km*1000,color:"#6f6f6f",weight:1,opacity:.35,
+        dashArray:"4 6",fill:false,interactive:false}).addTo(map);
+      ringLayers.push(c);
+    });
+    const cur=L.circle([v.lat,v.lon],{radius:state.dist*1000,color:"#0a0a0a",weight:1.4,opacity:.7,
+      fill:true,fillColor:"#0a0a0a",fillOpacity:.03,interactive:false}).addTo(map);
+    ringLayers.push(cur);
+  });
+}
+function paintPins(){
+  DATA.forEach(h=>{
+    const m=markers[h.id], el=m.getElement();
+    const on=state.sel===h.id;
+    m.setZIndexOffset(on?1500:0);
+    if(el){const p=el.querySelector(".pin"); if(p) p.classList.toggle("sel",on);}
+  });
+  if(typeof paintPinAvatars==="function") paintPinAvatars();
+}
+function select(id,from){
+  state.sel = state.sel===id ? null : id;
+  list.querySelectorAll(".card").forEach(c=>c.classList.toggle("sel",c.dataset.id===state.sel));
+  cluster();
+  if(!state.sel) return;
+  const h=DATA.find(d=>d.id===state.sel);
+  if(from==="list") map.setView([h.lat,h.lon],Math.max(map.getZoom(),16),{animate:true});
+  if(from==="map"){
+    const card=list.querySelector('.card[data-id="'+state.sel+'"]');
+    const box=document.getElementById("left");
+    if(card) box.scrollTo({top:card.offsetTop-box.offsetTop-64,behavior:"smooth"});
+  }
+}
+
+list.addEventListener("click",e=>{
+  const rb=e.target.closest("[data-route]");
+  if(rb){
+    const id=rb.dataset.route;
+    state.routeFrom = state.routeFrom===id ? null : id;
+    if(state.routeFrom && state.sel!==id) select(id,"list");
+    render();
+    drawTraces();
+    if(state.routeFrom){
+      const h=DATA.find(d=>d.id===id);
+      const b=L.latLngBounds([[h.lat,h.lon]].concat(VENUES.filter(v=>v.lat!=null).map(v=>[v.lat,v.lon])));
+      map.fitBounds(b.pad(0.25),{maxZoom:15,padding:[40,40]});
+    }
+    return;
+  }
+  if(e.target.closest("a,button")) return;
+  const c=e.target.closest(".card"); if(c) select(c.dataset.id,"list");
+});
+list.addEventListener("keydown",e=>{
+  if(e.key!=="Enter") return;
+  const c=e.target.closest(".card"); if(c) select(c.dataset.id,"list");
+});
+
+const venuesEl=$("#venues");
+function drawVenueRows(){
+  venuesEl.innerHTML=VENUES.map(v=>{
+    const isRef=state.ref===v.id;
+    const unset=v.lat==null;
+    const flag = unset ? (state.placing&&state.ref===v.id ? "Cliquez la carte" : "À placer") : (isRef?"Référence":"");
+    if(state.editing===v.id){
+      const val=/^À préciser|^Point placé/.test(v.addr)?"":v.addr;
+      return '<div class="vrow editing" aria-pressed="'+isRef+'" data-venue="'+v.id+'">'
+        + '<span class="dot '+v.shape+'" style="background:'+v.color+'"></span>'
+        + '<span><span class="name">'+v.label+'</span>'
+        +   '<span class="vwrap"><input class="vinput" data-input="'+v.id+'" value="'+val.replace(/"/g,"&quot;")+'" placeholder="Tapez l\'adresse, choisissez dans la liste" autocomplete="off"><span class="vsug" id="vsug" hidden></span></span>'
+        +   '<span class="vhint">Flèches pour choisir · Entrée pour valider · Échap pour annuler</span></span>'
+        + '<button class="vedit" data-edit="'+v.id+'">Valider</button></div>';
+    }
+    return '<div class="vrow" role="button" tabindex="0" aria-pressed="'+isRef+'" data-venue="'+v.id+'">'
+      + '<span class="dot '+v.shape+'" style="background:'+v.color+'"></span>'
+      + '<span><span class="name">'+v.label+'</span><br><span class="sub">'+v.addr+'</span></span>'
+      + '<span class="flag">'+flag+'</span>'
+      + '<button class="vedit" data-edit="'+v.id+'">Modifier</button></div>';
+  }).join("");
+}
+venuesEl.addEventListener("click",e=>{
+  const s=e.target.closest("[data-sug]");
+  if(s){ pickSug(+s.dataset.sug); return; }
+  const ed=e.target.closest(".vedit");
+  if(ed){ editVenue(ed.dataset.edit); return; }
+  if(e.target.closest(".vinput")) return;          // laisse la saisie tranquille
+  const b=e.target.closest(".vrow"); if(!b) return;
+  if(state.editing===b.dataset.venue) return;      // pas de recadrage pendant l'édition
+  setRef(b.dataset.venue);
+});
+venuesEl.addEventListener("keydown",e=>{
+  if(e.target.classList.contains("vinput")) return;
+  if(e.key!=="Enter"&&e.key!==" ") return;
+  const b=e.target.closest(".vrow"); if(!b) return;
+  e.preventDefault(); setRef(b.dataset.venue);
+});
+
+function editVenue(id){
+  if(state.editing===id){ applyVenueAddress(id); return; }
+  if(state.ref!==id) setRef(id);
+  state.editing=id;
+  state.placing=true;
+  document.getElementById("right").classList.add("placing");
+  drawVenueRows();
+  const inp=venuesEl.querySelector('.vinput[data-input="'+id+'"]');
+  if(inp){inp.focus();inp.select();}
+  setStatus("Corrigez l'adresse dans la ligne, ou cliquez le bon point sur la carte.");
+}
+
+function cancelEdit(){
+  state.editing=null; state.placing=false;
+  document.getElementById("right").classList.remove("placing");
+  drawVenueRows();
+  setStatus("Modification annulée.");
+}
+
+async function applyVenueAddress(id){
+  const inp=venuesEl.querySelector('.vinput[data-input="'+id+'"]');
+  const q=inp?inp.value.trim():"";
+  if(!q){cancelEdit();return;}
+  const v=venueById(id);
+  setStatus("Recherche de « "+q+" »…");
+  try{
+    const g=await mbSearch(q);
+    if(!g){setStatus("Adresse introuvable. Ajoutez la ville ou le code postal.");return;}
+    v.lat=g.lat; v.lon=g.lon; v.addr=g.addr||q; v.geo=true;
+    saveVenues();
+    state.editing=null; state.placing=false;
+    document.getElementById("right").classList.remove("placing");
+    recompute(); drawVenues(); drawVenueRows(); render();
+    map.setView([v.lat,v.lon],Math.max(map.getZoom(),15),{animate:true});
+    setStatus("« "+v.label+" » placé sur "+v.addr);
+    refreshRoutes();
+  }catch(e){setStatus("Géocodeur injoignable — cliquez le bon point directement sur la carte.");}
+}
+
+async function mbSuggest(q){
+  const url="https://api.mapbox.com/search/geocode/v6/forward?q="+encodeURIComponent(q)
+    +(typeof proxParam==="function"?proxParam():"")
+    +"&limit=6&country=fr&language=fr&types=address,street,place,postcode,locality&access_token="+MAPBOX_TOKEN;
+  const r=await fetch(url);
+  if(!r.ok) return [];
+  const j=await r.json();
+  return (j.features||[]).map(f=>{
+    const p=f.properties, full=p.full_address;
+    const base=full||p.place_formatted||"";
+    const addr=(p.name && !base.toLowerCase().includes(String(p.name).toLowerCase()))?[p.name,base].filter(Boolean).join(", "):base;
+    return {lat:f.geometry.coordinates[1], lon:f.geometry.coordinates[0], addr:addr,
+            sub:(p.place_formatted||"").replace(", France","")};
+  }).filter(s=>s.addr);
+}
+
+let sugTimer=null;
+function closeSug(){const el=venuesEl.querySelector(".vsug"); if(el){el.hidden=true;el.innerHTML="";} state.sug=[]; state.sugIdx=-1;}
+function drawSug(){
+  const el=venuesEl.querySelector(".vsug"); if(!el) return;
+  if(!state.sug || !state.sug.length){el.hidden=true;el.innerHTML="";return;}
+  el.hidden=false;
+  el.innerHTML=state.sug.map((s,i)=>
+    '<button type="button" data-sug="'+i+'" aria-selected="'+(i===state.sugIdx)+'"><b>'+s.addr.split(",")[0]+'</b><span>'+(s.sub||s.addr)+'</span></button>').join("");
+}
+function pickSug(i){
+  const s=state.sug&&state.sug[i]; if(!s) return;
+  const v=venueById(state.editing); if(!v) return;
+  v.lat=s.lat; v.lon=s.lon; v.addr=s.addr; v.geo=true;
+  saveVenues();
+  closeSug();
+  state.editing=null; state.placing=false;
+  document.getElementById("right").classList.remove("placing");
+  recompute(); drawVenues(); drawVenueRows(); render();
+  map.setView([v.lat,v.lon],Math.max(map.getZoom(),15),{animate:true});
+  setStatus("« "+v.label+" » placé sur "+v.addr);
+  refreshRoutes();
+}
+
+venuesEl.addEventListener("input",e=>{
+  if(!e.target.classList.contains("vinput")) return;
+  const q=e.target.value.trim();
+  clearTimeout(sugTimer);
+  if(q.length<4){closeSug();return;}
+  sugTimer=setTimeout(async()=>{
+    try{ state.sug=await mbSuggest(q); state.sugIdx=-1; drawSug(); }catch(err){ closeSug(); }
+  },350);
+});
+
+venuesEl.addEventListener("keydown",e=>{
+  if(!e.target.classList.contains("vinput")) return;
+  const n=(state.sug||[]).length;
+  if(e.key==="ArrowDown"&&n){e.preventDefault();state.sugIdx=(state.sugIdx+1)%n;drawSug();return;}
+  if(e.key==="ArrowUp"&&n){e.preventDefault();state.sugIdx=(state.sugIdx-1+n)%n;drawSug();return;}
+  if(e.key==="Enter"){
+    e.preventDefault();
+    if(n && state.sugIdx>=0){ pickSug(state.sugIdx); return; }
+    if(n===1){ pickSug(0); return; }
+    applyVenueAddress(e.target.dataset.input);
+    return;
+  }
+  if(e.key==="Escape"){e.preventDefault();closeSug();cancelEdit();}
+});
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape" && (state.editing||state.placing)) cancelEdit();
+});
+
+function setRef(id){
+  const v=venueById(id);
+  state.ref=id;
+  saveVenues();
+  state.placing = v.lat==null;
+  document.getElementById("right").classList.toggle("placing",state.placing);
+  recompute();
+  drawVenues();
+  drawVenueRows();
+  render();
+  if(v.lat!=null){map.panTo([v.lat,v.lon],{animate:true});refreshRoutes();}
+  else setStatus("Cliquez sur la carte pour placer « "+v.label+" », ou saisissez son adresse ci-dessous.");
+}
+
+function onMapClick(e){
+  if(!state.placing) return;
+  const v=venueById(state.ref);
+  v.lat=e.latlng.lat; v.lon=e.latlng.lng;
+  v.addr="Point placé sur la carte · "+v.lat.toFixed(4)+", "+v.lon.toFixed(4);
+  saveVenues();
+  state.placing=false; state.editing=null;
+  document.getElementById("right").classList.remove("placing");
+  recompute(); drawVenues(); drawVenueRows(); render(); refreshRoutes();
+}
+
+function bookUrl(h){
+  const q=h.name.replace(/\s*\(.*?\)\s*/g," ").trim()+" "+(h.addr||h.area||"");
+  const inp=document.getElementById("dateIn"), out=document.getElementById("dateOut");
+  const base=(h.type==="location")
+    ? "https://www.airbnb.fr/s/"+encodeURIComponent(q)+"/homes"
+    : "https://www.booking.com/searchresults.fr.html?ss="+encodeURIComponent(q)+"";
+  const u=new URL(base);
+  if(inp&&out&&inp.value&&out.value){
+    if(h.type==="location"){ u.searchParams.set("checkin",inp.value); u.searchParams.set("checkout",out.value); }
+    else { u.searchParams.set("checkin",inp.value); u.searchParams.set("checkout",out.value); }
+  }
+  return u.toString();
+}
+
+function stayUrl(url){
+  try{
+    const inp=document.getElementById("dateIn"), out=document.getElementById("dateOut");
+    if(!inp||!out||!inp.value||!out.value) return url;
+    const u=new URL(url,location.href), host=u.hostname;
+    if(/booking\.com$/.test(host)||/\.booking\.com$/.test(host)){
+      u.searchParams.set("checkin",inp.value); u.searchParams.set("checkout",out.value);
+    } else if(/airbnb\./.test(host)){
+      u.searchParams.set("check_in",inp.value); u.searchParams.set("check_out",out.value);
+    } else if(/gites-de-france|abritel|vrbo|expedia/.test(host)){
+      u.searchParams.set("startDate",inp.value); u.searchParams.set("endDate",out.value);
+    } else return url;
+    return u.toString();
+  }catch(e){ return url; }
+}
+
+const dstat=$("#dstat");
+const CENTER={lat:43.4832,lon:-1.5586};
+
+let lastStatus="";
+function setStatus(t){
+  if(t!==undefined) lastStatus=t;
+  const lines=[state.tileNotice,state.geoNotice,state.poiNotice].filter(Boolean)
+    .map(s=>'<span style="color:var(--ink);font-weight:600">'+s+'</span>');
+  dstat.innerHTML = lines.concat(lastStatus?[lastStatus]:[]).join("<br>");
+}
+
+async function nominatim(q){
+  const url="https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=fr&q="+encodeURIComponent(q);
+  const r=await fetch(url,{headers:{"Accept":"application/json"}});
+  if(!r.ok) throw new Error("nominatim "+r.status);
+  const j=await r.json();
+  if(!j.length) return null;
+  return {lat:+j[0].lat, lon:+j[0].lon, label:j[0].display_name};
+}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function queryFor(h){
+  const city=h.area.split(",").pop().trim();
+  return h.name.replace(/\s*\(.*?\)\s*/g," ").trim()+", "+city;
+}
+
+async function routeFrom(origin){
+  const coords=[[origin.lon,origin.lat]].concat(DATA.map(h=>[h.lon,h.lat]))
+    .map(c=>c[0].toFixed(5)+","+c[1].toFixed(5)).join(";");
+  const r=await fetch("https://router.project-osrm.org/table/v1/driving/"+coords+"?sources=0&annotations=duration,distance");
+  if(!r.ok) throw new Error("osrm "+r.status);
+  const j=await r.json();
+  if(j.code!=="Ok") throw new Error(j.code);
+  DATA.forEach((h,i)=>{
+    const sec=j.durations[0][i+1], m=j.distances[0][i+1];
+    if(sec==null||m==null) return;
+    h.routes=h.routes||{};
+    h.routes[origin.id]={km:m/1000, sec:sec};
+  });
+}
+
+const GEO_KEY="hm-geo-v4";
+function geoCache(){try{return JSON.parse(localStorage.getItem(GEO_KEY)||"{}");}catch(e){return {};}}
+function geoCacheSave(c){try{localStorage.setItem(GEO_KEY,JSON.stringify(c));}catch(e){}}
+
+async function mbSearch(q){
+  const url="https://api.mapbox.com/search/searchbox/v1/forward?q="+encodeURIComponent(q)
+    +(typeof proxParam==="function"?proxParam():"")
+    +"&limit=1&country=fr&language=fr&types=poi,address,street,place&access_token="+MAPBOX_TOKEN;
+  const r=await fetch(url);
+  if(!r.ok) throw new Error("mapbox "+r.status);
+  const j=await r.json();
+  const f=j.features&&j.features[0];
+  if(!f) return null;
+  const p=f.properties, full=p.full_address;
+  const base = full || p.place_formatted || "";
+  const addr = (p.name && !base.toLowerCase().includes(String(p.name).toLowerCase())) ? [p.name,base].filter(Boolean).join(", ") : base;
+  return {lon:f.geometry.coordinates[0], lat:f.geometry.coordinates[1], name:p.name, addr:addr};
+}
+
+async function tryLocate(h,cache){
+  const q=h.name.replace(/\s*\(.*?\)\s*/g," ").trim()+" "+h.area.split(",").pop().trim();
+  const g=await mbSearch(q);
+  if(!g || !g.addr) return false;
+  if(!/^\d/.test(g.addr)) return false;                 // exige un numéro de rue
+  if(!/(rue|avenue|av\.|bd|boulevard|chemin|place|pl\.|route|impasse|all[eé]e|quai|cours|promenade)/i.test(g.addr)) return false;
+  if(haversine(h,g)>2) return false;
+  h.lat=g.lat; h.lon=g.lon; h.addr=g.addr; h.geo=true;
+  markers[h.id].setLatLng([h.lat,h.lon]);
+  cache[h.id]={lat:g.lat,lon:g.lon,addr:g.addr};
+  return true;
+}
+
+async function locateAll(){
+  if(!MAPBOX_TOKEN) return;
+  const cache=geoCache();
+  let hits=DATA.filter(h=>h.fixed).length, done=0;
+  const pending=[];
+  for(const h of DATA){
+    done++;
+    if(h.type==="location"||h.fixed) continue;
+    const c=cache[h.id];
+    if(c){h.lat=c.lat;h.lon=c.lon;h.addr=c.addr;h.geo=true;hits++;markers[h.id].setLatLng([h.lat,h.lon]);continue;}
+    setStatus("Localisation précise des hébergements… "+done+"/"+DATA.length);
+    try{ if(await tryLocate(h,cache)) hits++; else pending.push(h); }catch(e){ pending.push(h); }
+    recompute(); render();
+  }
+  for(const h of pending){
+    try{ if(await tryLocate(h,cache)) hits++; }catch(e){}
+  }
+  geoCacheSave(cache);
+  recompute(); render();
+  const loc=DATA.filter(h=>h.type==="location").length;
+  state.geoNotice = hits+" adresses exactes sur "+DATA.length
+    +" — seules les "+loc+" locations restent approximatives (Airbnb ne donne l'adresse qu'après réservation).";
+  setStatus();
+  DATA.forEach(h=>{if(h.routes) delete h.routes;});
+  refreshRoutes();
+}
+
+const POI_KEY="hm-poi-v3";
+const POI_CATS=[["hotel","hotel"],["bed_and_breakfast","chambre"],["campground","camping"]];
+const POI_SKIP=/club de plage|plage mickey|restaurant|thalasso|golf club|piscine|spa\b|agence|conciergerie|immobili/i;
+
+const RINGS=[2,5,10,17,25];
+function biasCentre(){
+  const p=(typeof VENUES!=="undefined") ? VENUES.filter(v=>v.lat!=null) : [];
+  if(!p.length) return null;
+  return {lat:p.reduce((s,v)=>s+v.lat,0)/p.length, lon:p.reduce((s,v)=>s+v.lon,0)/p.length};
+}
+function proxParam(){
+  const c=biasCentre();
+  return c ? "&proximity="+c.lon.toFixed(4)+","+c.lat.toFixed(4) : "";
+}
+function bboxOf(c,km){
+  const dLat=km/111, dLon=km/(111*Math.cos(c.lat*Math.PI/180));
+  return [(c.lon-dLon).toFixed(4),(c.lat-dLat).toFixed(4),(c.lon+dLon).toFixed(4),(c.lat+dLat).toFixed(4)].join(",");
+}
+async function fetchCategory(cat,c,km){
+  const url="https://api.mapbox.com/search/searchbox/v1/category/"+cat
+    +"?proximity="+c.lon.toFixed(4)+","+c.lat.toFixed(4)
+    +"&bbox="+bboxOf(c,km)+"&limit=25&language=fr&access_token="+MAPBOX_TOKEN;
+  try{
+    const r=await fetch(url);
+    if(!r.ok) return [];
+    const j=await r.json();
+    return j.features||[];
+  }catch(e){ return []; }
+}
+
+function poiToEntry(f,type,n){
+  const p=f.properties||{}, c=f.geometry.coordinates;
+  const addr=p.full_address||p.place_formatted||"";
+  if(!p.name||!addr||POI_SKIP.test(p.name)) return null;
+  const city=(addr.match(/\d{5}\s+([^,]+)/)||[])[1]||addr.split(",").pop().trim();
+  return {id:"poi-"+type+"-"+n, name:p.name, type:type, lat:c[1], lon:c[0], addr:addr,
+    geo:true, fixed:true, source:"mapbox", price:null, rating:null, reviews:0, cap:null,
+    extras:[], left:null, area:city,
+    site:(p.metadata&&(p.metadata.website||p.metadata.wikidata_website))||p.website||null,
+    url:"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(p.name+" "+addr)};
+}
+
+function alreadyKnown(e){
+  return DATA.some(d=>haversine(d,e)<0.08 ||
+    d.name.toLowerCase().replace(/[^a-z]/g,"").includes(e.name.toLowerCase().replace(/[^a-z]/g,"").slice(0,10)));
+}
+
+async function loadNearby(force){
+  if(!MAPBOX_TOKEN) return;
+  let list=[];
+  if(force){ try{localStorage.removeItem(POI_KEY);}catch(e){} }
+  else try{
+    const cached=JSON.parse(localStorage.getItem(POI_KEY)||"null");
+    if(cached && Date.now()-cached.t < 7*864e5) list=cached.list;
+  }catch(e){}
+  if(!list.length){
+    const centres=VENUES.filter(v=>v.lat!=null);
+    const seen=new Set(); let n=0, step=0;
+    const total=centres.length*RINGS.length*POI_CATS.length;
+    for(const c of centres){
+      for(const km of RINGS){
+        for(const [cat,type] of POI_CATS){
+          step++;
+          setStatus("Balayage concentrique — "+c.label+", rayon "+km+" km ("+step+"/"+total+")");
+          const feats=await fetchCategory(cat,c,km);
+          feats.forEach(f=>{
+            const co=f.geometry&&f.geometry.coordinates; if(!co) return;
+            const k=(f.properties&&f.properties.name||"")+"@"+co[0].toFixed(4)+","+co[1].toFixed(4);
+            if(seen.has(k)) return;
+            seen.add(k);
+            const e=poiToEntry(f,type,++n); if(e) list.push(e);
+          });
+        }
+      }
+    }
+    try{localStorage.setItem(POI_KEY,JSON.stringify({t:Date.now(),list:list}));}catch(e){}
+  }
+  let added=0;
+  list.forEach(e=>{
+    if(alreadyKnown(e)) return;
+    DATA.push(e);
+    const t=TYPES[e.type];
+    const m=L.marker([e.lat,e.lon],{draggable:true,autoPan:true,
+      icon:L.divIcon({className:"", html:'<div class="pin"><i style="background:'+t.bg+'"></i><b>?</b></div>', iconSize:[15,15], iconAnchor:[7,7]})});
+    m.on("click",()=>select(e.id,"map"));
+    m.bindTooltip(e.name,{direction:"top",offset:[0,-8]});
+    markers[e.id]=m;
+    added++;
+  });
+  if(!added){ state.poiNotice="Aucun hébergement supplémentaire trouvé autour des trois adresses."; setStatus(); return; }
+  state.poiNotice=added+" hébergements supplémentaires trouvés autour des trois adresses (source Mapbox) — tarifs et avis à vérifier.";
+  recompute(); render(); setStatus();
+  refreshRoutes();
+  if(!state.sel) frameMap();
+}
+
+async function refreshRoutes(){
+  const ref=venueById(state.ref);
+  const origin=(ref&&ref.lat!=null)?ref:venueById("mairie");
+  try{
+    setStatus("Calcul des itinéraires depuis "+origin.label+"…");
+    await routeFrom(origin);
+    recompute(); render();
+    setStatus("Itinéraires voiture calculés depuis "+origin.label+" (OSRM).");
+    if(!state.sel) frameMap();
+  }catch(e){
+    setStatus("Itinéraires indisponibles — temps estimés depuis les distances routières.");
+  }
+}
+
+
+const typeChips=$("#typeChips");
+typeChips.innerHTML=Object.entries(TYPES).map(([k,t])=>
+  '<button class="chip" aria-pressed="true" data-type="'+k+'">'+t.label+'</button>').join("");
+typeChips.addEventListener("click",e=>{
+  const b=e.target.closest(".chip"); if(!b) return;
+  const k=b.dataset.type;
+  if(state.types.has(k)) state.types.delete(k); else state.types.add(k);
+  b.setAttribute("aria-pressed",state.types.has(k));
+  render();
+});
+
+const sortChips=$("#sortChips");
+sortChips.innerHTML=[["distance","Distance"],["prix","Prix"]].map(([k,l])=>
+  '<button class="chip" data-sort="'+k+'" aria-pressed="'+(k==="distance")+'">'+l+'</button>').join("");
+sortChips.addEventListener("click",e=>{
+  const b=e.target.closest(".chip"); if(!b) return;
+  state.sort=b.dataset.sort;
+  sortChips.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c===b));
+  render();
+});
+
+const bMin=$("#budgetMin"), bMax=$("#budgetMax"), dist=$("#dist"), people=$("#people");
+bMin.value=state.min; bMax.value=state.max; dist.value=state.dist;
+function syncLabels(){
+  $("#budgetVal").textContent = state.min+" € – "+state.max+" €";
+  $("#distVal").textContent = state.dist+" km"+(state.allThree?" des 3 lieux":"");
+}
+function applyBudget(v){
+  state.max=Math.max(v,state.min+10); bMax.value=state.max; syncLabels(); render();
+}
+bMin.addEventListener("input",()=>{state.min=Math.min(+bMin.value,state.max-10);bMin.value=state.min;syncLabels();render();});
+bMax.addEventListener("input",()=>{state.max=Math.max(+bMax.value,state.min+10);bMax.value=state.max;syncLabels();render();});
+dist.addEventListener("input",()=>{state.dist=+dist.value;syncLabels();render();if(typeof drawRings==="function")drawRings();});
+people.addEventListener("change",()=>{state.people=+people.value;render();});
+$("#trace").addEventListener("change",e=>{state.trace=e.target.checked;drawTraces();});
+
+function frameMap(){
+  const el=document.getElementById("map");
+  map.invalidateSize();
+  if(!map.getSize().x) return;
+  const pts=VENUES.filter(v=>v.lat!=null).map(v=>L.latLng(v.lat,v.lon))
+    .concat(DATA.filter(pass).map(h=>L.latLng(h.lat,h.lon)));
+  const b=L.latLngBounds(pts);
+  if(!b.isValid()) return;
+  map.fitBounds(b,{padding:[28,28],maxZoom:15});
+  // vérification en pixels : tout point hors cadre => on dézoome
+  for(let i=0;i<5;i++){
+    const s=map.getSize();
+    const bad=pts.some(p=>{
+      const q=map.latLngToContainerPoint(p);
+      return q.x<20||q.y<20||q.x>s.x-20||q.y>s.y-20;
+    });
+    if(!bad) break;
+    const z=map.getZoom();
+    if(z<=9) break;
+    map.setZoom(z-1,{animate:false});
+  }
+}
+
+function boot(){
+  initMap();
+  syncLabels();
+  drawVenues();
+  drawVenueRows();
+  render();
+  let framed=false;
+  function tick(){
+    map.invalidateSize();
+    if(!framed && map.getSize().x){framed=true;frameMap();}
+  }
+  let tries=0;
+  const iv=setInterval(()=>{
+    tick();
+    if(++tries>30){clearInterval(iv); if(!state.sel) frameMap();}
+  },100);
+  tick();
+  new ResizeObserver(()=>map.invalidateSize()).observe(document.getElementById("map"));
+  window.addEventListener("resize",()=>map.invalidateSize());
+  refreshRoutes();
+  locateAll();
+  loadNearby();
+}
+boot();
+document.getElementById("searchNearby").addEventListener("click",async e=>{
+  const b=e.currentTarget, t=b.textContent;
+  b.disabled=true; b.textContent="Recherche en cours…";
+  try{ await loadNearby(true); } finally { b.disabled=false; b.textContent=t; }
+});
+const STAY_KEY="mariage.sejour";
+const EV_KEY="mariage.events";
+
+/* --- boîtes de dialogue (prompt/confirm bloqués en aperçu) --- */
+function askText(title,def,okLabel){
+  return new Promise(res=>{
+    const w=document.getElementById("dlgWrap"), f=document.getElementById("dlg"),
+          i=document.getElementById("dlgInput"), t=document.getElementById("dlgTitle"),
+          ok=document.getElementById("dlgOk");
+    t.textContent=title; i.value=def||""; i.style.display="";
+    ok.textContent=okLabel||"Valider";
+    w.classList.add("open"); setTimeout(()=>{i.focus();i.select();},20);
+    function done(v){
+      w.classList.remove("open");
+      f.onsubmit=null; document.getElementById("dlgCancel").onclick=null; w.onclick=null;
+      res(v);
+    }
+    f.onsubmit=e=>{e.preventDefault();done(i.value);};
+    document.getElementById("dlgCancel").onclick=()=>done(null);
+    w.onclick=e=>{ if(e.target===w) done(null); };
+  });
+}
+function askConfirm(title){
+  return new Promise(res=>{
+    const w=document.getElementById("dlgWrap"), f=document.getElementById("dlg"),
+          i=document.getElementById("dlgInput"), t=document.getElementById("dlgTitle"),
+          ok=document.getElementById("dlgOk");
+    t.textContent=title; i.style.display="none"; ok.textContent="Supprimer";
+    w.classList.add("open");
+    function done(v){
+      w.classList.remove("open"); i.style.display="";
+      f.onsubmit=null; document.getElementById("dlgCancel").onclick=null; w.onclick=null;
+      res(v);
+    }
+    f.onsubmit=e=>{e.preventDefault();done(true);};
+    document.getElementById("dlgCancel").onclick=()=>done(false);
+    w.onclick=e=>{ if(e.target===w) done(false); };
+  });
+}
+
+/* --- profils invités --- */
+const initials=n=>n.trim().split(/\s+/).map(w=>w[0]).slice(0,2).join("").toUpperCase();
+function avHTML(p,cls){
+  const st=p.photo?'background-image:url('+p.photo+')':'';
+  return '<span class="av'+(cls?' '+cls:'')+'" data-av="'+p.id+'" style="'+st+'" title="'+p.name+'">'+(p.photo?'':initials(p.name))+'</span>';
+}
+function sleepersOf(id){ return PEOPLE.filter(p=>STAYS[p.id]===id); }
+function sleepersHTML(h){
+  const s=sleepersOf(h.id); if(!s.length) return '';
+  return '<div class="sleepers">'+s.map(p=>avHTML(p)).join("")
+    +'<span class="cnt">'+s.map(p=>p.name).join(", ")+'</span></div>';
+}
+function sleepBtn(h){
+  if(!MEID) return '';
+  const here=STAYS[MEID]===h.id;
+  return '<button class="verify'+(here?' on':'')+'" data-sleep="'+h.id+'">'+(here?'Je ne dors plus ici':'Je dors ici')+'</button>';
+}
+function renderPeople(){
+  const box=document.getElementById("plist");
+  box.innerHTML=PEOPLE.map(p=>'<button class="person'+(p.id===MEID?' on':'')+'" data-me="'+p.id+'">'
+    + avHTML(p) + '<span class="pn">'+p.name+'</span>'
+    + '<span class="del" data-pdel="'+p.id+'" title="Supprimer">×</span></button>').join("")
+    || '<div class="rhint">Aucun profil pour le moment.</div>';
+}
+function renderRecap(){
+  const box=document.getElementById("recap");
+  const byHeb={};
+  PEOPLE.forEach(p=>{ const id=STAYS[p.id]; if(id){ (byHeb[id]=byHeb[id]||[]).push(p); } });
+  const ids=Object.keys(byHeb);
+  const unplaced=PEOPLE.filter(p=>!STAYS[p.id]);
+  let html='<h3>Qui dort où</h3>';
+  if(!ids.length && !PEOPLE.length){
+    html+='<div class="none">Ajoutez des profils à gauche, puis cliquez « Je dors ici » sur un hébergement.</div>';
+  } else {
+    html+=ids.map(id=>{
+      const heb=DATA.find(d=>d.id===id);
+      return '<div class="rline"><span>'+(heb?heb.name:id)+'</span><span class="who">'
+        + byHeb[id].map(p=>avHTML(p)).join("")+'</span></div>';
+    }).join("");
+    if(unplaced.length) html+='<div class="rline"><span style="color:var(--muted)">Sans hébergement</span><span class="who">'
+      + unplaced.map(p=>avHTML(p)).join("")+'</span></div>';
+  }
+  box.innerHTML=html;
+}
+function paintPinAvatars(){
+  DATA.forEach(hb=>{
+    const m=markers[hb.id]; if(!m) return;
+    const el=m.getElement(); if(!el) return;
+    const old=el.querySelector(".pinav"); if(old) old.remove();
+    const s=sleepersOf(hb.id); if(!s.length) return;
+    const w=document.createElement("div");
+    w.className="pinav";
+    w.innerHTML=s.slice(0,3).map(p=>avHTML(p)).join("");
+    el.style.position="relative";
+    el.appendChild(w);
+  });
+}
+function peopleSync(){
+  if(typeof EVENTS!=="undefined"){
+    const cur=EVENTS.list.find(e=>e.id===EVENTS.active);
+    if(cur){ cur.people=PEOPLE; cur.stays=STAYS; cur.me=MEID; evSave(EVENTS); }
+  }
+  renderPeople(); renderRecap();
+  if(typeof render==="function") render();
+  paintPinAvatars();
+}
+function shrinkImage(file,cb){
+  const fr=new FileReader();
+  fr.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const s=96, c=document.createElement("canvas"); c.width=c.height=s;
+      const ctx=c.getContext("2d");
+      const k=Math.min(img.width,img.height);
+      ctx.drawImage(img,(img.width-k)/2,(img.height-k)/2,k,k,0,0,s,s);
+      cb(c.toDataURL("image/jpeg",0.72));
+    };
+    img.src=fr.result;
+  };
+  fr.readAsDataURL(file);
+}
+function evLoad(){
+  try{ const o=JSON.parse(localStorage.getItem(EV_KEY)||"null"); if(o&&o.list&&o.list.length) return o; }catch(e){}
+  return {active:"ev1",list:[{id:"ev1",names:localStorage.getItem("mariage.noms")||"Jeanne & Louis",
+    stay:localStorage.getItem(STAY_KEY)||null, venues:localStorage.getItem(VENUE_KEY)||null}]};
+}
+function evSave(o){ try{localStorage.setItem(EV_KEY,JSON.stringify(o));}catch(e){} }
+function evCapture(o){
+  const cur=o.list.find(e=>e.id===o.active); if(!cur) return o;
+  cur.names=localStorage.getItem("mariage.noms")||cur.names;
+  cur.stay=localStorage.getItem(STAY_KEY);
+  cur.venues=localStorage.getItem(VENUE_KEY);
+  return o;
+}
+function evApply(ev){
+  if(ev.names) localStorage.setItem("mariage.noms",ev.names); else localStorage.removeItem("mariage.noms");
+  if(ev.stay) localStorage.setItem(STAY_KEY,ev.stay); else localStorage.removeItem(STAY_KEY);
+  localStorage.setItem(VENUE_KEY, ev.venues || JSON.stringify({ref:"mairie",v:{},blank:true}));
+}
+function evDates(ev){
+  try{ const s=JSON.parse(ev.stay||"null"); if(!s||!s.in) return "dates à définir";
+    const f=new Intl.DateTimeFormat("fr-FR",{day:"numeric",month:"short",year:"numeric"});
+    return f.format(new Date(s.in+"T12:00"));
+  }catch(e){ return "dates à définir"; }
+}
+let EVENTS=evLoad();
+if(!EVENTS.list.some(e=>e.id===EVENTS.active)) EVENTS.active=EVENTS.list[0].id;
+evApply(EVENTS.list.find(e=>e.id===EVENTS.active));
+function renderEvents(){
+  const box=document.getElementById("elist");
+  box.innerHTML=EVENTS.list.map(e=>
+    '<button class="ev'+(e.id===EVENTS.active?' on':'')+'" data-ev="'+e.id+'">'
+    + '<span><span class="en">'+e.names+'</span><br><span class="ed">'+evDates(e)
+    +   ' · <span class="bud" data-bud="'+e.id+'" title="Modifier le budget par nuit">'+(e.budget?e.budget+' €/nuit':'budget ?')+'</span></span></span>'
+    + (EVENTS.list.length>1?'<span class="del" data-del="'+e.id+'" title="Supprimer">×</span>':'<span></span>')
+    + '</button>').join("");
+}
+document.getElementById("elist").addEventListener("click",ev=>{
+  const bud=ev.target.closest("[data-bud]");
+  if(bud){
+    ev.stopPropagation();
+    const e=EVENTS.list.find(x=>x.id===bud.dataset.bud);
+    askText("Budget maximum par nuit (€) — "+e.names, e.budget||"").then(v=>{
+      if(v===null) return;
+      const n=parseInt(v,10);
+      e.budget = isNaN(n)?null:Math.max(30,Math.min(320,n));
+      evSave(EVENTS); renderEvents();
+      if(e.id===EVENTS.active && e.budget!=null && typeof applyBudget==="function") applyBudget(e.budget);
+    });
+    return;
+  }
+  const del=ev.target.closest("[data-del]");
+  if(del){
+    ev.stopPropagation();
+    const id=del.dataset.del;
+    const e=EVENTS.list.find(x=>x.id===id);
+    askConfirm("Supprimer « "+e.names+" » ?").then(yes=>{
+      if(!yes) return;
+      EVENTS.list=EVENTS.list.filter(x=>x.id!==id);
+      if(EVENTS.active===id){ EVENTS.active=EVENTS.list[0].id; evSave(EVENTS); evApply(EVENTS.list[0]); location.reload(); return; }
+      evSave(EVENTS); renderEvents();
+    });
+    return;
+  }
+  const b=ev.target.closest("[data-ev]"); if(!b) return;
+  const id=b.dataset.ev; if(id===EVENTS.active) return;
+  EVENTS=evCapture(EVENTS); EVENTS.active=id; evSave(EVENTS);
+  evApply(EVENTS.list.find(e=>e.id===id));
+  location.reload();
+});
+document.getElementById("addEvent").addEventListener("click",()=>{
+  askText("Prénoms des mariés","","Créer").then(name=>{
+    if(!name||!name.trim()) return;
+    EVENTS=evCapture(EVENTS);
+    const id="ev"+Date.now();
+    EVENTS.list.push({id:id,names:name.trim(),stay:null,
+      venues:JSON.stringify({ref:"mairie",v:{},blank:true})});
+    EVENTS.active=id; evSave(EVENTS);
+    evApply(EVENTS.list[EVENTS.list.length-1]);
+    location.reload();
+  });
+});
+renderEvents();
+(function initPeople(){
+  const cur=EVENTS.list.find(e=>e.id===EVENTS.active)||{};
+  PEOPLE=cur.people||[]; STAYS=cur.stays||{}; MEID=cur.me||(PEOPLE[0]&&PEOPLE[0].id)||null;
+  renderPeople(); renderRecap();
+  if(cur.budget!=null && typeof applyBudget==="function") applyBudget(cur.budget);
+  document.getElementById("addPerson").addEventListener("click",()=>{
+    askText("Prénom / nom de la personne","","Ajouter").then(n=>{
+      if(!n||!n.trim()) return;
+      const p={id:"p"+Date.now(),name:n.trim(),photo:null};
+      PEOPLE.push(p); MEID=p.id; peopleSync();
+    });
+  });
+  const plist=document.getElementById("plist");
+  const avFile=document.getElementById("avFile");
+  let avTarget=null;
+  avFile.addEventListener("change",()=>{
+    const f=avFile.files&&avFile.files[0];
+    const p=PEOPLE.find(x=>x.id===avTarget);
+    avFile.value="";
+    if(!f||!p||!/^image\//.test(f.type)) return;
+    shrinkImage(f,url=>{ p.photo=url; peopleSync(); });
+  });
+  plist.addEventListener("click",e=>{
+    const av=e.target.closest(".av[data-av]");
+    if(av){ e.stopPropagation(); avTarget=av.dataset.av; avFile.click(); return; }
+    const d=e.target.closest("[data-pdel]");
+    if(d){ e.stopPropagation();
+      const id=d.dataset.pdel;
+      PEOPLE=PEOPLE.filter(p=>p.id!==id); delete STAYS[id];
+      if(MEID===id) MEID=PEOPLE[0]?PEOPLE[0].id:null;
+      peopleSync(); return; }
+    const b=e.target.closest("[data-me]"); if(!b) return;
+    MEID=b.dataset.me; peopleSync();
+  });
+  document.addEventListener("dragover",e=>{
+    const av=e.target.closest(".av[data-av]"); if(!av) return;
+    e.preventDefault(); av.classList.add("drop");
+  });
+  document.addEventListener("dragleave",e=>{
+    const av=e.target.closest(".av[data-av]"); if(av) av.classList.remove("drop");
+  });
+  document.addEventListener("drop",e=>{
+    const av=e.target.closest(".av[data-av]"); if(!av) return;
+    e.preventDefault(); av.classList.remove("drop");
+    const f=e.dataTransfer.files&&e.dataTransfer.files[0];
+    if(!f||!/^image\//.test(f.type)) return;
+    const p=PEOPLE.find(x=>x.id===av.dataset.av); if(!p) return;
+    shrinkImage(f,url=>{ p.photo=url; peopleSync(); });
+  });
+  document.addEventListener("click",e=>{
+    const b=e.target.closest("[data-sleep]"); if(!b) return;
+    e.stopPropagation();
+    if(!MEID){ alert("Ajoutez d'abord votre profil dans la colonne de gauche."); return; }
+    const id=b.dataset.sleep;
+    if(STAYS[MEID]===id) delete STAYS[MEID]; else STAYS[MEID]=id;
+    peopleSync();
+  },true);
+})();
+
+(function railToggle(){
+  const b=document.getElementById("railToggle"), app=document.getElementById("app");
+  const KEY="mariage.rail";
+  const set=hidden=>{
+    app.classList.toggle("norail",hidden);
+    b.textContent=hidden?"›":"‹";
+    try{localStorage.setItem(KEY,hidden?"1":"0");}catch(e){}
+    if(map) setTimeout(()=>map.invalidateSize(),200);
+  };
+  set(localStorage.getItem(KEY)==="1");
+  b.addEventListener("click",()=>set(!app.classList.contains("norail")));
+})();
+
+(function bugs(){
+  const btn=document.getElementById("bugBtn"), panel=document.getElementById("bugPanel");
+  const ta=document.getElementById("bugText"), msg=document.getElementById("bugMsg");
+  const KEY="mariage.bugs";
+  const load=()=>{try{return JSON.parse(localStorage.getItem(KEY)||"[]");}catch(e){return [];}};
+  const count=()=>{const n=load().length; msg.textContent=n?n+" signalement"+(n>1?"s":"")+" enregistré"+(n>1?"s":"")+" sur cet appareil.":"";};
+  btn.addEventListener("click",()=>{ panel.classList.toggle("open"); if(panel.classList.contains("open")){count();ta.focus();} });
+  document.getElementById("bugSave").addEventListener("click",()=>{
+    const t=ta.value.trim(); if(!t) return;
+    const all=load(); all.push({t:t,at:new Date().toISOString()});
+    try{localStorage.setItem(KEY,JSON.stringify(all));}catch(e){}
+    ta.value=""; count();
+  });
+  document.getElementById("bugMail").addEventListener("click",e=>{
+    const t=ta.value.trim()||load().map(b=>"- "+b.t).join("\n");
+    e.currentTarget.href="mailto:?subject="+encodeURIComponent("Bug — hébergements mariage")+"&body="+encodeURIComponent(t);
+  });
+  count();
+})();
+
+const namesEl=document.getElementById("wedNames");
+const savedNames=localStorage.getItem("mariage.noms");
+if(savedNames) namesEl.textContent=savedNames;
+namesEl.addEventListener("blur",()=>{
+  namesEl.textContent=namesEl.textContent.replace(/\s+/g," ").trim()||"Jeanne & Louis";
+  localStorage.setItem("mariage.noms",namesEl.textContent);
+  EVENTS=evCapture(EVENTS); evSave(EVENTS); renderEvents();
+});
+namesEl.addEventListener("keydown",e=>{ if(e.key==="Enter"){e.preventDefault();namesEl.blur();} });
+
+const dateIn=document.getElementById("dateIn"), dateOut=document.getElementById("dateOut");
+function fmtStay(){
+  const a=dateIn.value, b=dateOut.value;
+  const h1={}, nEl=document.getElementById("nights");
+  if(!a||!b){ nEl.textContent="—"; return; }
+  const da=new Date(a+"T12:00"), db=new Date(b+"T12:00");
+  const nights=Math.max(0,Math.round((db-da)/864e5));
+  const dayM=new Intl.DateTimeFormat("fr-FR",{day:"numeric",month:"long"});
+  const sameMonth=da.getMonth()===db.getMonth()&&da.getFullYear()===db.getFullYear();
+  h1.textContent = sameMonth
+    ? da.getDate()+" & "+dayM.format(db)+" "+db.getFullYear()
+    : dayM.format(da)+" – "+dayM.format(db)+" "+db.getFullYear();
+  nEl.textContent = nights+(nights>1?" nuits":" nuit");
+  document.title="Hébergements — Mariage à Biarritz, "+h1.textContent;
+
+}
+function onStayChange(){
+  if(dateIn.value && dateOut.value && dateOut.value<=dateIn.value){
+    const d=new Date(dateIn.value+"T12:00"); d.setDate(d.getDate()+1);
+    dateOut.value=d.toISOString().slice(0,10);
+  }
+  fmtStay();
+  try{localStorage.setItem(STAY_KEY,JSON.stringify({in:dateIn.value,out:dateOut.value}));}catch(e){}
+  if(typeof EVENTS!=="undefined"){ EVENTS=evCapture(EVENTS); evSave(EVENTS); renderEvents(); }
+  if(typeof render==="function") render();
+}
+try{
+  const s=JSON.parse(localStorage.getItem(STAY_KEY)||"null");
+  if(s&&s.in&&s.out){ dateIn.value=s.in; dateOut.value=s.out; }
+}catch(e){}
+dateIn.addEventListener("change",onStayChange);
+dateOut.addEventListener("change",onStayChange);
+fmtStay();
+</script>
+</body>
+</html>

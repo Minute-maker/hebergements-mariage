@@ -1,0 +1,6 @@
+:root{
+/* Clay has no heavy shadow system. Depth is color contrast, not elevation. */
+--shadow-none:none;
+--shadow-hover:0 2px 8px rgba(10,10,10,0.06);
+--border-hairline:1px solid var(--hairline)
+}
