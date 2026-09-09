@@ -55,6 +55,20 @@ Le jeton qui figurait en clair dans le prototype est exposé (il est dans le
 prototype comme dans les transcriptions) : mieux vaut le remplacer par un jeton
 neuf et restreint.
 
+### Publier en ligne (GitHub Pages)
+
+Le dépôt contient une action GitHub qui compile et publie l'application à chaque
+envoi sur `main`. Une seule chose à activer, une fois : **Settings → Pages →
+Source : GitHub Actions**. L'adresse est ensuite
+`https://<compte>.github.io/<dépôt>/`.
+
+Le jeton Mapbox est facultatif. Pour l'utiliser en ligne, ajoutez-le en secret de
+dépôt (**Settings → Secrets and variables → Actions → New repository secret**),
+sous le nom `VITE_MAPBOX_TOKEN`, et autorisez `https://<compte>.github.io/*` dans
+les restrictions d'URL du jeton. Sans secret, la carte utilise OpenStreetMap et
+tout le reste fonctionne, sauf l'autocomplétion d'adresses et la recherche
+d'hébergements.
+
 ## Ce que fait l'application
 
 - **Trois lieux par mariage.** Chaque ligne se modifie sur place (autocomplétion
