@@ -15,13 +15,14 @@ import { state, visibleRows } from "../state.js";
 import { cluster } from "../map/cluster.js";
 import { getMap } from "../map/map.js";
 import { drawTraces } from "../map/traces.js";
-import { bookUrl, mapsLink, photosLink, reviewsLink } from "./links.js";
+import { mapsLink, officialSite, photosLink, reviewsLink } from "./links.js";
 import { sleepBtn, sleepersHTML } from "./people.js";
 
 const listEl = () => document.getElementById("list");
 
 export function cardHTML(h) {
   const t = TYPES[h.type];
+  const site = officialSite(h);
 
   // Sans lieu placé, aucune distance n'a de sens : on le dit au lieu d'inventer.
   const trip =
@@ -106,10 +107,12 @@ export function cardHTML(h) {
     '<div class="extras">' +
     extras +
     "</div>" +
-    '<div class="actions"><a class="book" href="' +
-    esc(bookUrl(h)) +
-    '" target="_blank" rel="noopener">Voir / réserver</a>' +
-    (h.site ? '<a class="verify" href="' + esc(h.site) + '" target="_blank" rel="noopener">Site officiel</a>' : "") +
+    '<div class="actions">' +
+    (site
+      ? '<a class="book" href="' +
+        esc(site) +
+        '" target="_blank" rel="noopener">Réserver sur le site officiel</a>'
+      : "") +
     '<button class="verify' +
     (state.routeFrom === h.id ? " on" : "") +
     '" data-route="' +

@@ -118,9 +118,11 @@ conception (voir `design-handoff/chats/`) :
 - **Tarifs indicatifs.** Ceux de la sélection d'origine datent de la conception ;
   les hébergements trouvés par la recherche affichent « tarif à vérifier ». Aucun
   prix n'est lu en direct pour vos dates.
-- **Adresses des locations de particuliers.** Airbnb ne communique l'adresse
-  exacte qu'après réservation : leur repère est placé au quartier, et la fiche le
-  dit.
+- **Pas de recherche Booking ni Airbnb.** Un hébergement n'entre dans la liste que
+  s'il a un **site à lui**, vers lequel la fiche renvoie directement : c'est là
+  qu'on réserve, qu'on voit les vraies photos et les vrais tarifs. Une page de
+  résultats générique n'apporte rien, et une location de particulier n'a pas
+  d'adresse publique — les unes comme les autres sont donc écartées.
 - **Tout est stocké sur l'appareil.** Sans serveur, vos amis ne voient pas vos
   affectations et vous ne voyez pas les leurs.
 

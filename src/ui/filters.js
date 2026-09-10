@@ -1,4 +1,5 @@
 /** Filtres et tri : type, budget, distance max, nombre de personnes, tracé. */
+import { DATA } from "../data/accommodations.js";
 import { TYPES } from "../data/types.js";
 import { esc } from "../lib/html.js";
 import { state } from "../state.js";
@@ -25,8 +26,12 @@ export function applyBudget(v) {
 }
 
 export function initFilters() {
+  // Un filtre qui ne peut rien trouver n'a pas sa place : on ne montre que les
+  // types réellement présents dans la liste.
+  const present = new Set(DATA.map((h) => h.type));
   const typeChips = document.getElementById("typeChips");
   typeChips.innerHTML = Object.entries(TYPES)
+    .filter(([k]) => present.has(k))
     .map(
       ([k, t]) =>
         '<button class="chip" aria-pressed="true" data-type="' + esc(k) + '">' + esc(t.label) + "</button>",

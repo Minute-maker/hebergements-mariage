@@ -127,14 +127,14 @@ export async function locateAll() {
   recompute();
   hooks.render();
 
-  const rentals = DATA.filter((h) => h.type === "location").length;
+  const approx = DATA.length - hits;
   state.geoNotice =
     hits +
     " adresses exactes sur " +
     DATA.length +
-    " — seules les " +
-    rentals +
-    " locations restent approximatives (Airbnb ne donne l'adresse qu'après réservation).";
+    (approx
+      ? " — les " + approx + " autres sont placées au quartier, glissez le repère pour les corriger."
+      : " — toutes les positions sont exactes.");
   setStatus();
 
   DATA.forEach((h) => delete h.routes);
@@ -146,6 +146,9 @@ function poiToEntry(f, type, n) {
     c = f.geometry.coordinates;
   const addr = p.full_address || p.place_formatted || "";
   if (!p.name || !addr || POI_SKIP.test(p.name)) return null;
+  // Sans site propre, la fiche ne mène nulle part : elle n'a pas sa place ici.
+  const site = (p.metadata && (p.metadata.website || p.metadata.wikidata_website)) || p.website || null;
+  if (!site) return null;
   const city = (addr.match(/\d{5}\s+([^,]+)/) || [])[1] || addr.split(",").pop().trim();
   return {
     id: "poi-" + type + "-" + n,
@@ -164,8 +167,8 @@ function poiToEntry(f, type, n) {
     extras: [],
     left: null,
     area: city,
-    site: (p.metadata && (p.metadata.website || p.metadata.wikidata_website)) || p.website || null,
-    url: "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(p.name + " " + addr),
+    site,
+    url: site,
   };
 }
 

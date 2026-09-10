@@ -1,9 +1,13 @@
 /**
  * Liens sortants d'une fiche.
  *
- * Aucune donnée commerciale n'est reproduite dans l'application (prix indicatifs,
- * ni notes ni avis) : chaque fiche renvoie vers la source réelle, toujours à jour.
- * Les dates du séjour sont injectées quand le site les accepte.
+ * Le but de l'application est de faire atterrir sur le site de l'établissement :
+ * c'est là qu'on réserve, qu'on voit les vraies photos et les vrais tarifs. Une
+ * recherche Booking ou Airbnb générique n'apporte rien — un hébergement sans site
+ * propre n'entre donc pas dans la liste (voir data/accommodations.js).
+ *
+ * Aucune donnée commerciale n'est reproduite ici (ni notes, ni avis, tarifs
+ * indicatifs) : chaque fiche renvoie vers la source réelle, toujours à jour.
  */
 import { originVenue } from "../data/venues.js";
 import { state } from "../state.js";
@@ -11,26 +15,9 @@ import { state } from "../state.js";
 /** Nom d'établissement débarrassé de ses parenthèses (« Studio (location) »). */
 const cleanName = (h) => h.name.replace(/\s*\(.*?\)\s*/g, " ").trim();
 
-function stayDates() {
-  const a = document.getElementById("dateIn"),
-    b = document.getElementById("dateOut");
-  return a && b && a.value && b.value ? { in: a.value, out: b.value } : null;
-}
-
-/** Recherche Booking (hôtels, chambres d'hôtes) ou Airbnb (locations), dates comprises. */
-export function bookUrl(h) {
-  const q = cleanName(h) + " " + (h.addr || h.area || "");
-  const base =
-    h.type === "location"
-      ? "https://www.airbnb.fr/s/" + encodeURIComponent(q) + "/homes"
-      : "https://www.booking.com/searchresults.fr.html?ss=" + encodeURIComponent(q);
-  const u = new URL(base);
-  const d = stayDates();
-  if (d) {
-    u.searchParams.set("checkin", d.in);
-    u.searchParams.set("checkout", d.out);
-  }
-  return u.toString();
+/** Site propre de l'établissement, ou null s'il n'en a pas. */
+export function officialSite(h) {
+  return h.url || h.site || null;
 }
 
 /**
