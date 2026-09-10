@@ -15,7 +15,7 @@ import { VENUES, originVenue } from "../data/venues.js";
 import { recompute, state } from "../state.js";
 import { hooks } from "../hooks.js";
 import { frameMap } from "../map/map.js";
-import { createMarker, geoCache, geoCacheSave, markers } from "../map/markers.js";
+import { createMarker, forgetDraggedPositions, geoCache, geoCacheSave, markers } from "../map/markers.js";
 import { fetchCategory, hasMapbox, locateByName } from "./mapbox.js";
 import { routeAllFrom } from "./osrm.js";
 import { setStatus } from "../ui/status.js";
@@ -30,19 +30,13 @@ const POI_CATS = [
 /** Faux positifs récurrents de l'annuaire. */
 const POI_SKIP = /club de plage|plage mickey|restaurant|thalasso|golf club|piscine|spa\b|agence|conciergerie|immobili/i;
 
-/** Branche un nouveau repère sur la carte (clic = sélection, glissé = repositionnement). */
+/** Branche un nouveau repère sur la carte : le clic sélectionne la fiche. */
 function attachMarker(h) {
-  return createMarker(h, {
-    onSelect: select,
-    onMoved: () => {
-      recompute();
-      hooks.render();
-      refreshRoutes();
-    },
-  });
+  return createMarker(h, { onSelect: select });
 }
 
 export function createAllMarkers() {
+  forgetDraggedPositions();
   DATA.forEach(attachMarker);
 }
 
@@ -133,7 +127,7 @@ export async function locateAll() {
     " adresses exactes sur " +
     DATA.length +
     (approx
-      ? " — les " + approx + " autres sont placées au quartier, glissez le repère pour les corriger."
+      ? " — les " + approx + " autres sont placées au quartier."
       : " — toutes les positions sont exactes.");
   setStatus();
 

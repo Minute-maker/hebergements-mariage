@@ -91,9 +91,15 @@ header.venue{padding:20px 24px 16px;background:var(--surface-soft);border-bottom
 .sleepers .av{width:24px;height:24px;font-size:10px;margin-left:-6px}
 .sleepers .av:first-child{margin-left:0}
 .sleepers .cnt{font-size:11px;color:var(--muted);margin-left:4px}
-.pinav{position:absolute;top:-16px;left:50%;transform:translateX(-50%);display:flex}
-.pinav .av{width:18px;height:18px;font-size:9px;margin-left:-5px}
+/* Avatars posés sur les repères. On réserve là où dorment ses amis : ils doivent
+   se voir d'un coup d'œil, et grossir avec le zoom (taille posée par paintPinAvatars). */
+.pinav{position:absolute;top:calc(-8px - var(--pinav, 30px));left:50%;transform:translateX(-50%);display:flex;pointer-events:none}
+.pinav .av{width:var(--pinav,30px);height:var(--pinav,30px);font-size:calc(var(--pinav,30px) * .38);
+  margin-left:calc(var(--pinav,30px) * -.26);border-width:2px;box-shadow:0 2px 6px rgba(10,10,10,.28)}
 .pinav .av:first-child{margin-left:0}
+.pinav .more{display:flex;align-items:center;justify-content:center;width:var(--pinav,30px);height:var(--pinav,30px);
+  border-radius:50%;background:var(--ink);color:var(--on-primary);border:2px solid var(--canvas);
+  font-size:calc(var(--pinav,30px) * .34);font-weight:600;margin-left:calc(var(--pinav,30px) * -.26)}
 .recap{padding:16px 24px;border-top:1px solid var(--hairline);background:var(--surface-soft)}
 .recap h3{font-size:13px;margin-bottom:8px}
 .recap .rline{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--hairline);font-size:12px}

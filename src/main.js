@@ -117,5 +117,8 @@ document.getElementById("searchNearby").addEventListener("click", async (e) => {
   }
 });
 
-/* Sélection depuis la console pendant le développement. */
-if (import.meta.env.DEV) window.__select = select;
+/* Accès depuis la console pendant le développement. */
+if (import.meta.env.DEV) {
+  window.__select = select;
+  window.__map = getMap();
+}

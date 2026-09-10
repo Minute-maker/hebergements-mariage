@@ -115,7 +115,7 @@ export function cluster() {
     clusterMarkers.push(cm);
   });
 
-  paintPins(hooks.paintPinAvatars);
+  paintPins(hooks.paintPinAvatars, (id) => hooks.sleepersOf(id).length > 0);
   clustering = false;
   drawTraces();
 }

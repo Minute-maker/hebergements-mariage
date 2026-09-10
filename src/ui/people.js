@@ -8,6 +8,7 @@
 import { DATA } from "../data/accommodations.js";
 import { esc } from "../lib/html.js";
 import { hooks } from "../hooks.js";
+import { getMap } from "../map/map.js";
 import { markers } from "../map/markers.js";
 import { askText } from "./dialog.js";
 import { activeEvent, save as saveEvents } from "./events.js";
@@ -129,8 +130,20 @@ function renderRecap() {
   box.innerHTML = html;
 }
 
+/**
+ * Taille des avatars sur la carte, en pixels, selon le zoom.
+ *
+ * On choisit son hébergement en fonction de là où dorment ses amis : à la vue
+ * d'ensemble il faut déjà les distinguer, et de près on veut les reconnaître.
+ */
+function avatarSize(zoom) {
+  return Math.round(Math.max(28, Math.min(52, 28 + (zoom - 11) * 4)));
+}
+
 /** Pose les avatars au-dessus des repères concernés. */
 export function paintPinAvatars() {
+  const map = getMap();
+  const size = avatarSize(map ? map.getZoom() : 13);
   DATA.forEach((h) => {
     const m = markers[h.id];
     if (!m) return;
@@ -142,10 +155,13 @@ export function paintPinAvatars() {
     if (!s.length) return;
     const wrap = document.createElement("div");
     wrap.className = "pinav";
-    wrap.innerHTML = s
-      .slice(0, 3)
-      .map((p) => avatarHTML(p))
-      .join("");
+    wrap.style.setProperty("--pinav", size + "px");
+    wrap.innerHTML =
+      s
+        .slice(0, 3)
+        .map((p) => avatarHTML(p))
+        .join("") + (s.length > 3 ? '<span class="more">+' + (s.length - 3) + "</span>" : "");
+    wrap.title = s.map((p) => p.name).join(", ");
     el.style.position = "relative";
     el.appendChild(wrap);
   });

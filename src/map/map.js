@@ -120,14 +120,18 @@ export function drawVenues() {
   });
 }
 
-/** Met en avant le repère sélectionné. */
-export function paintPins(paintAvatars) {
+/**
+ * Met en avant le repère sélectionné, et fait passer devant ceux où dort
+ * quelqu'un — sinon leur avatar se retrouve sous le repère voisin ou sous une
+ * pastille de regroupement (z-index 1400).
+ */
+export function paintPins(paintAvatars, hasSleepers) {
   DATA.forEach((h) => {
     const m = markers[h.id];
     if (!m) return;
     const el = m.getElement();
     const on = state.sel === h.id;
-    m.setZIndexOffset(on ? 1500 : 0);
+    m.setZIndexOffset(on ? 1500 : hasSleepers && hasSleepers(h.id) ? 1450 : 0);
     if (el) {
       const p = el.querySelector(".pin");
       if (p) p.classList.toggle("sel", on);
