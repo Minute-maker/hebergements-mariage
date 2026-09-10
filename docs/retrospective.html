@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{color-scheme:light dark}
+  body{margin:0}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
+<title>Neuf leçons d'une journée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap">
+
+<style>
+  :root{
+    --paper:#eef1ef;
+    --surface:#fbfcfb;
+    --surface-sunk:#e5eae7;
+    --ink:#14201d;
+    --body:#31413c;
+    --muted:#5d6b67;
+    --rule:#d2dad6;
+    --rule-soft:#e2e8e5;
+    --accent:#0b6b5f;
+    --accent-wash:#dfebe8;
+    --signal:#a8571c;
+    --signal-wash:#f2e6da;
+
+    --display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+    --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#0e1513;
+      --surface:#151e1b;
+      --surface-sunk:#1b2622;
+      --ink:#e6ece9;
+      --body:#c2cdc9;
+      --muted:#8fa09b;
+      --rule:#26332f;
+      --rule-soft:#1e2925;
+      --accent:#5cc9b5;
+      --accent-wash:#14302b;
+      --signal:#dc9a5c;
+      --signal-wash:#2e2318;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0e1513;
+    --surface:#151e1b;
+    --surface-sunk:#1b2622;
+    --ink:#e6ece9;
+    --body:#c2cdc9;
+    --muted:#8fa09b;
+    --rule:#26332f;
+    --rule-soft:#1e2925;
+    --accent:#5cc9b5;
+    --accent-wash:#14302b;
+    --signal:#dc9a5c;
+    --signal-wash:#2e2318;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--serif);
+    font-size:17px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:44rem;margin:0 auto;padding-block:clamp(2.5rem,7vw,5rem) 5rem;padding-left:20px;padding-right:20px}
+  h1,h2,h3,h4{font-family:var(--display);color:var(--ink);margin:0;text-wrap:balance;font-weight:700}
+  p{margin:0}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+  .eyebrow{
+    font-family:var(--mono);font-size:.68rem;font-weight:600;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead{display:flex;flex-direction:column;gap:1rem;padding-bottom:2rem;border-bottom:2px solid var(--ink)}
+  .masthead h1{font-size:clamp(2.2rem,7vw,3.4rem);line-height:1.02;letter-spacing:-.03em}
+  .standfirst{font-size:1.12rem;color:var(--body);max-width:34rem}
+  .standfirst strong{color:var(--ink);font-weight:600}
+
+  /* ---------- fact strip ---------- */
+  .facts{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+    background:var(--rule);border:1px solid var(--rule);
+    margin-top:2.5rem;
+  }
+  .facts div{background:var(--surface);padding:.9rem 1rem}
+  .facts .n{display:block;font-family:var(--mono);font-size:1.4rem;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+  .facts .l{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:.25rem}
+  @media(max-width:520px){.facts{grid-template-columns:1fr 1fr}}
+
+  /* ---------- section headings ---------- */
+  .sec{margin-top:4rem}
+  .sec > .eyebrow{display:block;margin-bottom:.5rem}
+  .sec > h2{font-size:1.5rem;letter-spacing:-.015em;margin-bottom:.6rem}
+  .sec > .lede{color:var(--muted);font-size:.98rem;max-width:32rem}
+
+  /* ---------- logbook ---------- */
+  .log{list-style:none;margin:1.75rem 0 0;padding:0;display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .log li{background:var(--surface);padding:1.1rem 1.15rem;display:grid;gap:.55rem}
+  .log .head{display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap}
+  .log time{font-family:var(--mono);font-size:.8rem;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums}
+  .log h4{font-size:1rem;font-weight:600;letter-spacing:-.01em}
+  .log p{font-size:.94rem;color:var(--muted)}
+  .tally{display:flex;align-items:flex-end;gap:2px;height:18px}
+  .tally i{display:block;width:3px;height:100%;background:var(--signal);opacity:.85}
+  .tally.none{align-items:center}
+  .cycles{font-family:var(--mono);font-size:.7rem;letter-spacing:.05em;color:var(--muted)}
+  .cycles b{color:var(--ink);font-weight:600}
+  .meter{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+
+  /* ---------- lessons ---------- */
+  .lessons{margin-top:1.75rem;display:grid;gap:2.75rem}
+  .lesson{display:grid;grid-template-columns:3rem minmax(0,1fr);gap:1.25rem;align-items:start}
+  .rank{
+    font-family:var(--mono);font-size:.95rem;font-weight:600;
+    color:var(--ink);padding-top:.15rem;font-variant-numeric:tabular-nums;
+    border-top:2px solid var(--ink);
+  }
+  .lesson h3{font-size:1.28rem;letter-spacing:-.015em;line-height:1.22;margin-bottom:.9rem}
+  .block{padding-left:.9rem;border-left:2px solid var(--rule);display:grid;gap:.3rem}
+  .block + .block{margin-top:.85rem}
+  .block .tag{font-family:var(--mono);font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+  .block p{font-size:.99rem}
+  .was{border-left-color:var(--signal)}
+  .was .tag{color:var(--signal)}
+  .fix{border-left-color:var(--accent)}
+  .fix .tag{color:var(--accent)}
+  .lesson code{font-family:var(--mono);font-size:.86em;background:var(--surface-sunk);padding:.1em .35em;border-radius:3px;color:var(--ink)}
+  .lesson strong{color:var(--ink);font-weight:600}
+  .arc{
+    font-family:var(--mono);font-size:.82rem;color:var(--muted);
+    background:var(--surface);border:1px solid var(--rule);
+    padding:.7rem .85rem;margin-top:.85rem;overflow-x:auto;white-space:nowrap;
+  }
+  .arc b{color:var(--ink);font-weight:600}
+  .ask{
+    font-family:var(--serif);font-style:italic;font-size:1.02rem;color:var(--ink);
+    background:var(--accent-wash);border:1px solid var(--rule);
+    padding:.8rem .95rem;margin-top:.85rem;
+  }
+  @media(max-width:560px){
+    .lesson{grid-template-columns:1fr;gap:.7rem}
+    .rank{border-top:none;padding-top:0;color:var(--accent)}
+  }
+
+  /* ---------- checklist ---------- */
+  .checklist{
+    margin-top:1.75rem;background:var(--surface);
+    border:1px solid var(--rule);border-top:3px solid var(--accent);
+    padding:1.4rem 1.5rem;
+  }
+  .checklist ol{margin:0;padding:0;list-style:none;counter-reset:step;display:grid;gap:.85rem}
+  .checklist li{
+    counter-increment:step;display:grid;grid-template-columns:1.6rem minmax(0,1fr);
+    gap:.75rem;align-items:baseline;font-size:1rem;
+  }
+  .checklist li::before{
+    content:counter(step);font-family:var(--mono);font-size:.72rem;font-weight:600;
+    color:var(--accent);border:1px solid var(--accent);border-radius:50%;
+    width:1.45rem;height:1.45rem;display:flex;align-items:center;justify-content:center;
+    align-self:start;
+  }
+  .checklist strong{color:var(--ink);font-weight:600}
+
+  .closer{
+    margin-top:4rem;padding-top:1.75rem;border-top:2px solid var(--ink);
+    font-size:1.08rem;color:var(--body);
+  }
+  .closer strong{color:var(--ink);font-weight:600}
+  .sig{margin-top:1.1rem;font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+</style>
+
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <span class="eyebrow">Rétrospective · 9 septembre 2026</span>
+    <h1>Neuf leçons d'une journée</h1>
+    <p class="standfirst">
+      Une application de choix d'hébergements pour un mariage, construite en un jour, de la maquette
+      à la mise en ligne. Elle marche. <strong>Le temps perdu n'est pas allé dans le produit — il est
+      allé dans l'ordre des étapes.</strong>
+    </p>
+  </header>
+
+  <div class="facts">
+    <div><span class="n">11 h</span><span class="l">de travail</span></div>
+    <div><span class="n">37</span><span class="l">cycles de correction</span></div>
+    <div><span class="n">1 607</span><span class="l">lignes en un fichier</span></div>
+  </div>
+
+  <section class="sec">
+    <span class="eyebrow">Journal de bord</span>
+    <h2>Où est passée la journée</h2>
+    <p class="lede">
+      Quatre sessions de conception, puis la mise en ligne le soir. Les barres comptent les allers-retours
+      de correction : chaque barre est un « ça ne marche pas » suivi d'un correctif.
+    </p>
+
+    <ol class="log">
+      <li>
+        <div class="head"><time>11 h 38</time><h4>Interface sélection hébergement</h4></div>
+        <p>La maquette, 22 hébergements réels, la carte, les trois adresses du mariage, le géocodage.</p>
+        <div class="meter">
+          <span class="tally" data-cycles="25" aria-hidden="true"></span>
+          <span class="cycles"><b>25</b> cycles</span>
+        </div>
+      </li>
+      <li>
+        <div class="head"><time>15 h 20</time><h4>Traçage des adresses et distances</h4></div>
+        <p>Les trajets entre les lieux, la persistance des adresses. Photos et notes retirées, faute d'être vérifiables.</p>
+        <div class="meter">
+          <span class="tally" data-cycles="4" aria-hidden="true"></span>
+          <span class="cycles"><b>4</b> cycles</span>
+        </div>
+      </li>
+      <li>
+        <div class="head"><time>17 h 16</time><h4>Nom du mariage</h4></div>
+        <p>Dates, multi-événements, profils invités, recherche concentrique, bouton de signalement.</p>
+        <div class="meter">
+          <span class="tally" data-cycles="8" aria-hidden="true"></span>
+          <span class="cycles"><b>8</b> cycles</span>
+        </div>
+      </li>
+      <li>
+        <div class="head"><time>20 h 02</time><h4>Les boutons du site</h4></div>
+        <p>Les liens de réservation, le recadrage de la photo. Session courte : le design était fini.</p>
+        <div class="meter">
+          <span class="tally none" data-cycles="0" aria-hidden="true"></span>
+          <span class="cycles"><b>0</b> cycle</span>
+        </div>
+      </li>
+      <li>
+        <div class="head"><time>22 h ⟶</time><h4>Mise en ligne</h4></div>
+        <p>Passage au code, dépôt, hébergement, jeton de carte. Cinq inconnues découvertes en même temps, le soir.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="sec">
+    <span class="eyebrow">Les leçons</span>
+    <h2>Classées par temps perdu</h2>
+    <p class="lede">
+      L'ordre compte : la première a coûté plus que les huit autres réunies.
+    </p>
+
+    <div class="lessons">
+
+      <article class="lesson">
+        <div class="rank">01</div>
+        <div>
+          <h3>Déployer le premier jour, pas le dernier</h3>
+          <div class="block was">
+            <span class="tag">Ce qui s'est passé</span>
+            <p>Toute la journée en maquette. Puis, à 22 h : dépôt de code, autorisations, hébergeur,
+            restrictions de la carte. <strong>Cinq inconnues en même temps, le soir, fatigué.</strong></p>
+          </div>
+          <div class="block fix">
+            <span class="tag">Ce qu'il fallait faire</span>
+            <p>Dans la première heure, mettre en ligne une page vide avec écrit « bonjour ». Ensuite,
+            chaque modification n'est plus qu'un envoi, et l'adresse existe depuis le début.</p>
+          </div>
+          <p class="ask">Tant qu'un projet n'est pas en ligne, on ne sait pas s'il peut l'être.</p>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="rank">02</div>
+        <div>
+          <h3>Décider ce qui est vérifiable avant de le dessiner</h3>
+          <div class="block was">
+            <span class="tag">Ce qui s'est passé</span>
+            <p>Des notes affichées — « 8,4/10 · 912 avis ». Vérification sur les sites : elles n'existaient pas.
+            Tout retiré, <strong>et le tri par note avec</strong>, puisqu'il en dépendait. Même histoire pour les photos :
+            construites, puis supprimées.</p>
+          </div>
+          <div class="block fix">
+            <span class="tag">Ce qu'il fallait faire</span>
+            <p>Trier chaque donnée avant de l'afficher. <strong>Vérifiable</strong> → on l'affiche.
+            <strong>Non vérifiable</strong> → un lien vers la source, jamais un chiffre.
+            <strong>Inventée</strong> → elle ne rentre pas, même en maquette.</p>
+          </div>
+          <p class="ask">Une maquette avec de faux chiffres n'est pas neutre : elle fait construire le tri,
+          les filtres et la mise en page autour de données qui vont disparaître.</p>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="rank">03</div>
+        <div>
+          <h3>Ne jamais coller une clé dans une conversation</h3>
+          <div class="block was">
+            <span class="tag">Ce qui s'est passé</span>
+            <p>Le jeton de carte collé dans le chat, recopié dans la maquette, arrivé dans les transcriptions.
+            Le soir, <strong>l'envoi du code a été bloqué</strong> : il a fallu réécrire les quatre enregistrements
+            pour l'effacer.</p>
+          </div>
+          <div class="block fix">
+            <span class="tag">Ce qu'il fallait faire</span>
+            <p>Écrire <code>MAPBOX_TOKEN</code> — un nom, jamais la valeur. La clé ne vit que dans un fichier
+            <code>.env</code> local et dans le tableau de bord de l'hébergeur.</p>
+          </div>
+          <p class="ask">Une clé qui a circulé est publique. On n'en discute pas : on la remplace.</p>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="rank">04</div>
+        <div>
+          <h3>Geler le périmètre de la première version</h3>
+          <div class="block was">
+            <span class="tag">Ce qui s'est passé</span>
+            <p>Le périmètre a triplé en cours de route, et chaque ajout a cassé le précédent : les avatars ont
+            cassé le regroupement des points, le multi-événements a cassé les adresses par défaut, et le test
+            « je mets une adresse à Paris » a échoué parce que Biarritz était écrit en dur.</p>
+          </div>
+          <div class="arc">choisir un hôtel <b>→</b> 3 lieux <b>→</b> tracés <b>→</b> recherche concentrique <b>→</b> multi-mariages <b>→</b> profils invités <b>→</b> signalement de bugs</div>
+          <div class="block fix">
+            <span class="tag">Ce qu'il fallait faire</span>
+            <p>Écrire sur un papier, au début : <strong>« v1 = un mariage, trois adresses, une liste, une carte. »</strong>
+            Finir ça, le mettre en ligne, le montrer à quelqu'un. Ensuite seulement, ouvrir la v2.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="rank">05</div>
+        <div>
+          <h3>La fonctionnalité qui ne pouvait pas marcher</h3>
+          <div class="block was">
+            <span class="tag">Ce qui s'est passé</span>
+            <p>« Qui dort où » et les profils invités : sans serveur, chaque personne ne voit que ses propres
+            données. <strong>Vos amis ne verront jamais où vous dormez.</strong> C'était dit, et construit quand même —
+            l'écran existe, il ne peut pas remplir sa fonction.</p>
+          </div>
+          <div class="block fix">
+            <span class="tag">Ce qu'il fallait faire</span>
+            <p>Poser la question devant toute fonctionnalité « à plusieurs » — et si la réponse est
+            « rien de ce que j'ai fait », il faut un serveur, ou il faut renoncer.</p>
+          </div>
+          <p class="ask">Si mon ami l'ouvre sur son téléphone, il voit quoi ?</p>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="rank">06</div>
+        <div>
+          <h3>Couper les boucles de correction</h3>
+          <div class="block was">
+            <span class="tag">Ce qui s'est passé</span>
+            <p><strong>37 cycles sur la journée, dont 25 dans la seule première session.</strong> Au moins six
+            portaient sur le même bug d'affichage de la carte : un correctif, une réapparition, un correctif,
+            une réapparition.</p>
+          </div>
+          <div class="block fix">
+            <span class="tag">Ce qu'il fallait faire</span>
+            <p>Au <strong>troisième</strong> retour du même symptôme, arrêter de corriger et écrire :
+            « Ne corrige pas. Explique-moi d'abord la cause exacte, et pourquoi les deux correctifs
+            précédents n'ont pas tenu. »</p>
+          </div>
+          <p class="ask">Un symptôme qui revient trois fois n'est pas un bug : c'est une cause qu'on n'a pas trouvée.</p>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="rank">07</div>
+        <div>
+          <h3>Maquette et produit sont deux métiers</h3>
+          <div class="block was">
+            <span class="tag">Ce qui s'est passé</span>
+            <p>La maquette faisait <strong>1 607 lignes dans un seul fichier</strong>, avec la bibliothèque de carte
+            chargée depuis internet. Elle ne démarrait même pas hors ligne — vérification faite le soir :
+            <code>L is not defined</code>, page morte.</p>
+          </div>
+          <div class="block fix">
+            <span class="tag">Ce qu'il fallait faire</span>
+            <p>Une maquette sert à décider <strong>quoi</strong> faire, pas <strong>comment</strong> le faire.
+            Le signal de bascule était net : au moment où les échanges ne parlaient plus de fonctionnalités
+            mais uniquement de bugs — milieu de la première session — la maquette avait fini son travail.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="rank">08</div>
+        <div>
+          <h3>Une check-list de trente secondes</h3>
+          <div class="block was">
+            <span class="tag">Ce qui s'est passé</span>
+            <p>Beaucoup des 37 cycles étaient des <strong>régressions</strong> : quelque chose qui marchait avant.
+            Rien ne permettait de s'en apercevoir tout de suite.</p>
+          </div>
+          <div class="block fix">
+            <span class="tag">Ce qu'il fallait faire</span>
+            <p>Cinq lignes écrites une fois pour toutes : la page s'ouvre et je vois la liste · je clique un
+            hôtel et la carte bouge · je change de lieu de référence et les distances changent · je filtre par
+            prix et la liste diminue · je recharge et mes réglages sont là.</p>
+          </div>
+          <p class="ask">C'est ce qui distingue « ça marche » de « ça marchait ».</p>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="rank">09</div>
+        <div>
+          <h3>Dire le but final dans la première phrase</h3>
+          <div class="block was">
+            <span class="tag">Ce qui s'est passé</span>
+            <p>La demande d'origine décrivait <strong>un écran</strong>. Le vrai besoin, c'était :
+            « un lien que j'envoie à mes invités pour qu'ils choisissent où dormir. »</p>
+          </div>
+          <div class="block fix">
+            <span class="tag">Ce qu'il fallait faire</span>
+            <p>Avec cette phrase au départ, trois décisions tombaient toutes seules : hébergement dès le
+            premier jour, stockage partagé — donc un serveur — et affichage pensé pour le téléphone,
+            puisque c'est là que les invités l'ouvriront.</p>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="sec">
+    <span class="eyebrow">Prochain projet</span>
+    <h2>L'ordre à suivre</h2>
+    <p class="lede">Sans exception, et dans cet ordre.</p>
+
+    <div class="checklist">
+      <ol>
+        <li><span><strong>Une phrase.</strong> Qui l'utilise, sur quel appareil, pour faire quoi.</span></li>
+        <li><span><strong>En ligne le jour 1</strong>, même vide.</span></li>
+        <li><span><strong>La liste des données</strong> : vérifiable / lien / interdit.</span></li>
+        <li><span><strong>La v1 écrite noir sur blanc</strong>, et rien d'autre jusqu'à ce qu'elle soit finie.</span></li>
+        <li><span><strong>Maquette</strong> pour décider, <strong>code</strong> dès que ça ne bouge plus.</span></li>
+        <li><span><strong>La check-list de 30 secondes</strong>, à chaque modification.</span></li>
+        <li><span><strong>Les clés dans <code>.env</code></strong>, jamais dans une conversation.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <p class="closer">
+    Vous avez fait en une journée ce qui prend une semaine à beaucoup, et l'application est en ligne.
+    <strong>Ce qui a coûté cher n'était pas la difficulté du projet, mais l'ordre des étapes</strong> —
+    et c'est exactement ce qui s'apprend en une fois.
+  </p>
+  <p class="sig">Hébergements mariage · Biarritz, 28–29 mai 2027</p>
+
+</div>
+
+<script>
+  // Les barres comptent des cycles réels, relevés dans les transcriptions.
+  for (const el of document.querySelectorAll('.tally[data-cycles]')) {
+    const n = Number(el.dataset.cycles);
+    for (let i = 0; i < n; i++) {
+      const bar = document.createElement('i');
+      // Repère de lecture : une barre plus haute tous les cinq cycles.
+      bar.style.height = (i % 5 === 4) ? '100%' : '62%';
+      el.appendChild(bar);
+    }
+    if (!n) el.insertAdjacentHTML('beforeend',
+      '<span style="font-family:var(--mono);font-size:.7rem;color:var(--accent)">aucun</span>');
+  }
+</script>
+
+</body>
+</html>

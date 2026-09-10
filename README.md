@@ -129,6 +129,12 @@ conception (voir `design-handoff/chats/`) :
 - **Tout est stocké sur l'appareil.** Sans serveur, vos amis ne voient pas vos
   affectations et vous ne voyez pas les leurs.
 
+## Rétrospective
+
+`docs/retrospective.html` — ce que la construction de cette application en une
+journée a coûté, les neuf leçons classées par temps perdu, et l'ordre des étapes
+à suivre au prochain projet. Ouvrable d'un double-clic.
+
 ## Organisation du code
 
 ```
