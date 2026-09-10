@@ -115,9 +115,12 @@ conception (voir `design-handoff/chats/`) :
   un chiffre invérifiable.
 - **Pas de photos d'établissement.** Même raison : un lien « Photos » ouvre les
   images réelles.
-- **Tarifs indicatifs.** Ceux de la sélection d'origine datent de la conception ;
-  les hébergements trouvés par la recherche affichent « tarif à vérifier ». Aucun
-  prix n'est lu en direct pour vos dates.
+- **Tarifs indicatifs, jamais lus en direct.** Chaque fiche porte soit un tarif
+  indicatif, soit une **fourchette estimée** signalée comme telle, relevée sur les
+  tarifs publiés de l'établissement — assez pour comparer, pas pour engager. Une
+  fiche sans aucune indication de prix ne sert à rien : il n'y en a plus.
+  Le filtre de budget retient le bas de la fourchette, pour ne masquer aucun
+  hébergement qui peut se révéler abordable.
 - **Pas de recherche Booking ni Airbnb.** Un hébergement n'entre dans la liste que
   s'il a un **site à lui**, vers lequel la fiche renvoie directement : c'est là
   qu'on réserve, qu'on voit les vraies photos et les vrais tarifs. Une page de

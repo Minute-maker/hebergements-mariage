@@ -34,14 +34,23 @@ export function forgetDraggedPositions() {
   return n;
 }
 
+/** Étiquette de prix : le tarif connu, sinon le bas de la fourchette estimée. */
+function priceLabel(h) {
+  if (h.price != null) return h.price + " €";
+  return h.est ? "dès " + h.est[0] + " €" : "";
+}
+
 function pinHTML(h) {
   const t = TYPES[h.type];
-  const price = h.price != null ? h.price + " €" : "?";
-  return '<div class="pin"><i style="background:' + t.bg + '"></i><b>' + price + "</b></div>";
+  const label = priceLabel(h);
+  return (
+    '<div class="pin"><i style="background:' + t.bg + '"></i>' + (label ? "<b>" + label + "</b>" : "") + "</div>"
+  );
 }
 
 function tooltipText(h) {
-  return h.price != null ? h.name + " · " + h.price + " €" : h.name;
+  const label = priceLabel(h);
+  return label ? h.name + " · " + label : h.name;
 }
 
 /**

@@ -10,7 +10,7 @@
  */
 import L from "leaflet";
 import { DATA } from "../data/accommodations.js";
-import { state } from "../state.js";
+import { priceOf, state } from "../state.js";
 import { hooks } from "../hooks.js";
 import { getMap, paintPins } from "./map.js";
 import { markers } from "./markers.js";
@@ -92,7 +92,13 @@ export function cluster() {
     }
     const lat = g.reduce((s, x) => s + x.h.lat, 0) / g.length,
       lon = g.reduce((s, x) => s + x.h.lon, 0) / g.length;
-    const min = Math.min.apply(null, g.map((x) => (x.h.price == null ? Infinity : x.h.price)));
+    const min = Math.min.apply(
+      null,
+      g.map((x) => {
+        const p = priceOf(x.h);
+        return p == null ? Infinity : p;
+      }),
+    );
     // Au premier plan : les pastilles passent devant les repères de lieux (1000–1200).
     const cm = L.marker([lat, lon], {
       zIndexOffset: 1400,

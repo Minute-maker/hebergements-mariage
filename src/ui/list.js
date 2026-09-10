@@ -67,10 +67,17 @@ export function cardHTML(h) {
       ? " · adresse communiquée après réservation"
       : " · position approchée";
 
+  // Jamais de fiche sans indication de prix : sinon elle ne sert pas à comparer.
   const price =
     h.price != null
       ? '<div class="price">' + h.price + " €<br><span>/ nuit</span></div>"
-      : '<div class="price" style="font-size:12px;font-weight:500;color:var(--muted)">tarif<br><span>à vérifier</span></div>';
+      : h.est
+        ? '<div class="price est">' +
+          h.est[0] +
+          "–" +
+          h.est[1] +
+          " €<br><span>estimé / nuit</span></div>"
+        : '<div class="price" style="font-size:13px"><span>prix sur le site</span></div>';
 
   return (
     '<article class="card' +

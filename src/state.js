@@ -70,6 +70,18 @@ export function recompute() {
   });
 }
 
+/**
+ * Prix retenu pour filtrer et trier, en euros.
+ *
+ * Un tarif connu l'emporte ; sinon on prend le bas de la fourchette estimée, pour
+ * ne pas masquer un hébergement qui peut se révéler abordable. La fiche, elle,
+ * affiche la fourchette entière : c'est ce qui permet de juger.
+ */
+export function priceOf(h) {
+  if (h.price != null) return h.price;
+  return h.est ? h.est[0] : null;
+}
+
 /** Un hébergement à plus de 60 km des trois lieux relève d'un autre secteur. */
 export function farFromVenues(h) {
   const placed = VENUES.filter((v) => v.lat != null);
@@ -81,8 +93,9 @@ export function farFromVenues(h) {
 export function pass(h) {
   if (farFromVenues(h)) return false;
   if (!state.types.has(h.type)) return false;
-  if (h.price != null && (h.price < state.min || h.price > state.max)) return false;
-  if (h.price == null && !state.noPrice) return false;
+  const price = priceOf(h);
+  if (price != null && (price < state.min || price > state.max)) return false;
+  if (price == null && !state.noPrice) return false;
   const d = state.allThree ? h.worst : h.km;
   if (d != null && d > state.dist) return false; // pas de filtre de distance sans lieu placé
   if (h.cap != null && h.cap < state.people) return false;
@@ -93,7 +106,7 @@ export function sorted(rows) {
   const num = (v, fb) => (v == null ? fb : v);
   const comparators = {
     distance: (a, b) => num(a.km, Infinity) - num(b.km, Infinity),
-    prix: (a, b) => num(a.price, 1e6) - num(b.price, 1e6),
+    prix: (a, b) => num(priceOf(a), 1e6) - num(priceOf(b), 1e6),
   };
   return rows.slice().sort(comparators[state.sort] || comparators.distance);
 }
